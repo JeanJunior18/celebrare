@@ -2,11 +2,11 @@ import { listGuestbookMessages } from '@/application/use-cases/list-guestbook-me
 import { GuestbookForm } from '@/components/forms/guestbook-form';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
-import { createPublishableServerClient } from '@/infrastructure/supabase/publishable-server-client';
-import { SupabaseGuestbookRepository } from '@/infrastructure/supabase/guestbook-repository.supabase';
+import { db } from '@/infrastructure/postgres/client';
+import { PostgresGuestbookRepository } from '@/infrastructure/postgres/guestbook-repository.postgres';
 
 export async function GuestbookSection() {
-  const repository = new SupabaseGuestbookRepository(createPublishableServerClient());
+  const repository = new PostgresGuestbookRepository(db);
   const messages = await listGuestbookMessages(repository);
 
   return (

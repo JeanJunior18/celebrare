@@ -3,8 +3,8 @@
 import { ZodError } from 'zod';
 
 import { confirmAttendance } from '@/application/use-cases/confirm-attendance.use-case';
-import { createPublishableServerClient } from '@/infrastructure/supabase/publishable-server-client';
-import { SupabaseRsvpRepository } from '@/infrastructure/supabase/rsvp-repository.supabase';
+import { db } from '@/infrastructure/postgres/client';
+import { PostgresRsvpRepository } from '@/infrastructure/postgres/rsvp-repository.postgres';
 
 export type RsvpActionResult =
   | { status: 'CREATED' }
@@ -17,7 +17,7 @@ export async function confirmAttendanceAction(
   formData: FormData,
 ): Promise<RsvpActionResult> {
   try {
-    const repository = new SupabaseRsvpRepository(createPublishableServerClient());
+    const repository = new PostgresRsvpRepository(db);
 
     return await confirmAttendance(repository, {
       guestName: String(formData.get('guestName') ?? ''),

@@ -6,11 +6,11 @@ import { GiftGallery } from '@/components/gift/gift-gallery';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
 import { eventConfig } from '@/config/event.config';
-import { createPublishableServerClient } from '@/infrastructure/supabase/publishable-server-client';
-import { SupabaseGiftRepository } from '@/infrastructure/supabase/gift-repository.supabase';
+import { db } from '@/infrastructure/postgres/client';
+import { PostgresGiftRepository } from '@/infrastructure/postgres/gift-repository.postgres';
 
 export async function GiftRegistrySection() {
-  const repository = new SupabaseGiftRepository(createPublishableServerClient());
+  const repository = new PostgresGiftRepository(db);
   const { registryItems, diaperPacks } = await listGiftItems(repository);
   const allItems = [...registryItems, ...diaperPacks];
 

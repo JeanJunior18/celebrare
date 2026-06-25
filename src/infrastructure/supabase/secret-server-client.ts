@@ -1,4 +1,7 @@
-// Usar SOMENTE dentro de app/internal/guest-log/. Esse client ignora RLS.
+// Client server-only, usado apenas pro Supabase Storage (bucket `media`) e,
+// futuramente, pela leitura privada de rsvps em app/internal/guest-log/. O
+// acesso a dados (gift_items, gallery_photos etc.) passou a ser direto via
+// Postgres (src/infrastructure/postgres/) — ver docs/saas-platform-plan.md.
 import { createClient } from '@supabase/supabase-js';
 
 export function createSecretServerClient() {

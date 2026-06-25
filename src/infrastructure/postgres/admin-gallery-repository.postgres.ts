@@ -1,0 +1,57 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { desc } from 'drizzle-orm';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+
+import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
+import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
+import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery-repository';
+import { imageExtension, uploadImageToMedia } from '@/infrastructure/supabase/upload-image';
+
+import { galleryPhotos } from './schema';
+import type * as schema from './schema';
+
+function toGalleryPhoto(row: typeof galleryPhotos.$inferSelect): GalleryPhoto {
+  return { ...row, ageLabel: row.ageLabel as BabyAgeStage };
+}
+
+export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
+  constructor(
+    private readonly db: NodePgDatabase<typeof schema>,
+    private readonly storageClient: SupabaseClient,
+  ) {}
+
+  async createPhoto(input: {
+    ageLabel: BabyAgeStage;
+    displayOrder: number;
+    image: File;
+  }): Promise<GalleryPhoto> {
+    const id = crypto.randomUUID();
+    const imageUrl = await uploadImageToMedia(
+      this.storageClient,
+      `gallery/${id}.${imageExtension(input.image)}`,
+      input.image,
+    );
+
+    const [photo] = await this.db
+      .insert(galleryPhotos)
+      .values({
+        id,
+        ageLabel: input.ageLabel,
+        imageUrl,
+        displayOrder: input.displayOrder,
+      })
+      .returning();
+
+    return toGalleryPhoto(photo);
+  }
+
+  async getNextDisplayOrder(): Promise<number> {
+    const [last] = await this.db
+      .select({ displayOrder: galleryPhotos.displayOrder })
+      .from(galleryPhotos)
+      .orderBy(desc(galleryPhotos.displayOrder))
+      .limit(1);
+
+    return last ? last.displayOrder + 1 : 0;
+  }
+}

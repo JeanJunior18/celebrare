@@ -5,7 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { createGalleryPhoto } from '@/application/use-cases/create-gallery-photo.use-case';
 import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gallery-display-order.use-case';
 import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
-import { SupabaseAdminGalleryRepository } from '@/infrastructure/supabase/admin-gallery-repository.supabase';
+import { db } from '@/infrastructure/postgres/client';
+import { PostgresAdminGalleryRepository } from '@/infrastructure/postgres/admin-gallery-repository.postgres';
 import { createSecretServerClient } from '@/infrastructure/supabase/secret-server-client';
 
 export interface AdminGalleryActionResult {
@@ -14,7 +15,7 @@ export interface AdminGalleryActionResult {
 }
 
 export async function getNextGalleryDisplayOrderAction(): Promise<number> {
-  const repository = new SupabaseAdminGalleryRepository(createSecretServerClient());
+  const repository = new PostgresAdminGalleryRepository(db, createSecretServerClient());
   return getNextGalleryDisplayOrder(repository);
 }
 
@@ -23,7 +24,7 @@ export async function createGalleryPhotoAction(
   formData: FormData,
 ): Promise<AdminGalleryActionResult> {
   try {
-    const repository = new SupabaseAdminGalleryRepository(createSecretServerClient());
+    const repository = new PostgresAdminGalleryRepository(db, createSecretServerClient());
 
     await createGalleryPhoto(repository, {
       ageLabel: formData.get('ageLabel') as BabyAgeStage,

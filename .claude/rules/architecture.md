@@ -18,10 +18,21 @@ domain -> application -> infrastructure/app. Nunca o inverso.
   de repositório como parâmetro (injeção via construtor/factory), valida
   input com `zod`, chama o repositório, devolve um resultado tipado. Sem
   import de nada em `infrastructure/`.
-- `infrastructure/supabase/` — implementações concretas (adapters), cada uma
-  recebendo um `SupabaseClient` via construtor — nunca instancia o client
-  dentro do próprio repositório. Único lugar do projeto autorizado a
-  importar `@supabase/supabase-js`.
+- `infrastructure/postgres/` — implementações concretas (adapters) dos
+  repositórios de domínio, via Drizzle ORM + driver `pg`, contra
+  `DATABASE_URL` (Postgres local em dev; mesmo Postgres hospedado pela
+  Supabase, por ora, em produção — ver docs/saas-platform-plan.md). Cada
+  repositório recebe a instância `db` (`NodePgDatabase`) via construtor —
+  nunca importa o client de `./client.ts` diretamente dentro de si. A lógica
+  atômica que já existia como função/trigger Postgres (`claim_gift_item`,
+  `upsert_rsvp`, fulfillment de fralda) continua no banco
+  (`src/infrastructure/postgres/migrations/`); os repositórios chamam essas
+  functions via SQL crua (`db.execute(sql\`select * from ...\`)`), nunca
+  reimplementam essa lógica em TypeScript.
+- `infrastructure/supabase/` — único lugar do projeto autorizado a importar
+  `@supabase/supabase-js`, hoje restrito ao Storage (bucket `media`, via
+  `upload-image.ts` + `secret-server-client.ts`). Não lê nem escreve nas 5
+  tabelas de domínio — isso é responsabilidade de `infrastructure/postgres/`.
 - `app/actions/` — Server Actions (`'use server'`). Composition root: é o
   único lugar que conecta uma implementação concreta de `infrastructure/` a
   um use case de `application/`. Sem lógica de negócio ou validação aqui —
@@ -49,6 +60,6 @@ domain -> application -> infrastructure/app. Nunca o inverso.
   fundir num repositório genérico.
 - **DIP** — `application/use-cases/` e `app/actions/` dependem das
   interfaces em `domain/repositories/`, nunca de uma classe concreta do
-  Supabase diretamente.
+  Postgres ou do Supabase diretamente.
 
 Schema completo e regras de negócio detalhadas: @docs/domain-model.md

@@ -18,6 +18,7 @@ import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { Pool } from 'pg';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -88,11 +89,13 @@ async function uploadImage(supabase, itemId, imageUrl) {
 async function main() {
   const supabaseUrl = requireEnv('SUPABASE_URL');
   const secretKey = requireEnv('SUPABASE_SECRET_KEY');
+  const databaseUrl = requireEnv('DATABASE_URL');
   const affiliateTool = requireEnv('MERCADOLIVRE_AFFILIATE_TOOL');
   const wishlistUrl = requireEnv('MERCADOLIVRE_WISHLIST_URL');
 
   const giftList = JSON.parse(readFileSync(path.join(__dirname, 'gift-list.json'), 'utf8'));
   const supabase = createClient(supabaseUrl, secretKey);
+  const pool = new Pool({ connectionString: databaseUrl });
 
   console.log(`Renderizando ${wishlistUrl}...`);
   const cards = await scrapeWishlistCards(wishlistUrl);
@@ -117,30 +120,37 @@ async function main() {
     const imageUrl = await uploadImage(supabase, entry.itemId, card.image);
     const purchaseUrl = `${cleanPermalink(card.href)}?matt_tool=${affiliateTool}`;
 
-    const { data: existing } = await supabase
-      .from('gift_items')
-      .select('id')
-      .eq('external_id', entry.itemId)
-      .maybeSingle();
-
-    const { error } = await supabase.from('gift_items').upsert(
-      {
-        external_id: entry.itemId,
-        name: card.title,
-        category: entry.category,
-        size_label: entry.sizeLabel ?? null,
-        quantity_needed: entry.quantityNeeded ?? 1,
-        image_url: imageUrl,
-        purchase_url: purchaseUrl,
-      },
-      { onConflict: 'external_id' },
+    const { rows: existingRows } = await pool.query(
+      'select id from gift_items where external_id = $1',
+      [entry.itemId],
     );
-    if (error) throw error;
 
-    if (existing) updated += 1;
+    await pool.query(
+      `insert into gift_items (external_id, name, category, size_label, quantity_needed, image_url, purchase_url)
+       values ($1, $2, $3, $4, $5, $6, $7)
+       on conflict (external_id) do update set
+         name = excluded.name,
+         category = excluded.category,
+         size_label = excluded.size_label,
+         quantity_needed = excluded.quantity_needed,
+         image_url = excluded.image_url,
+         purchase_url = excluded.purchase_url`,
+      [
+        entry.itemId,
+        card.title,
+        entry.category,
+        entry.sizeLabel ?? null,
+        entry.quantityNeeded ?? 1,
+        imageUrl,
+        purchaseUrl,
+      ],
+    );
+
+    if (existingRows.length > 0) updated += 1;
     else created += 1;
   }
 
+  await pool.end();
   console.log(`\nConcluído: ${created} criado(s), ${updated} atualizado(s).`);
 }
 

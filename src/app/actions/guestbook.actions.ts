@@ -1,8 +1,8 @@
 'use server';
 
 import { leaveGuestbookMessage } from '@/application/use-cases/leave-guestbook-message.use-case';
-import { createPublishableServerClient } from '@/infrastructure/supabase/publishable-server-client';
-import { SupabaseGuestbookRepository } from '@/infrastructure/supabase/guestbook-repository.supabase';
+import { db } from '@/infrastructure/postgres/client';
+import { PostgresGuestbookRepository } from '@/infrastructure/postgres/guestbook-repository.postgres';
 
 export interface GuestbookActionResult {
   success: boolean;
@@ -14,7 +14,7 @@ export async function leaveMessageAction(
   formData: FormData,
 ): Promise<GuestbookActionResult> {
   try {
-    const repository = new SupabaseGuestbookRepository(createPublishableServerClient());
+    const repository = new PostgresGuestbookRepository(db);
 
     await leaveGuestbookMessage(repository, {
       guestName: String(formData.get('guestName') ?? ''),
