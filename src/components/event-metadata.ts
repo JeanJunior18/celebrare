@@ -18,6 +18,7 @@ export function buildEventMetadata(event: Event): Metadata {
     openGraph: {
       title,
       description,
+      siteName: 'Celebrare',
       type: 'website',
       ...(imageUrl ? { images: [{ url: imageUrl, alt: event.honoreeName }] } : {}),
     },

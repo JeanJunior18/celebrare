@@ -22,16 +22,17 @@ const nunito = Nunito({
   weight: ['400', '500', '600', '700', '800'],
 });
 
-const siteUrl = 'https://arca-do-davi.asherlabs.com.br';
+const siteUrl = 'https://celebrare.me';
 
 // Fallback genérico — `/` e `/e/[slug]` sobrescrevem via `generateMetadata`
 // depois de buscar o evento (docs/saas-platform-plan.md, fase 7). Páginas
 // sem evento (`/login`, `/signup`, `/internal/*`) usam esse default.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'Convites e confirmação de presença',
-  description: 'Crie e gerencie o convite e a confirmação de presença do seu evento.',
+  title: 'Celebrare — convites e confirmação de presença',
+  description: 'Crie e gerencie o convite e a confirmação de presença do seu evento na Celebrare.',
   openGraph: {
+    siteName: 'Celebrare',
     locale: 'pt_BR',
     type: 'website',
   },

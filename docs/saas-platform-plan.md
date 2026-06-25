@@ -1,8 +1,9 @@
-# Plano — Arca do Davi → plataforma SaaS multi-tenant
+# Plano — Arca do Davi → plataforma SaaS multi-tenant (Celebrare)
 
 Documento de planejamento da transformação do site de convite/RSVP de um
 único evento (aniversário de 1 ano do Davi) numa plataforma que serve
-múltiplos eventos (casamentos e aniversários) de múltiplos hosts.
+múltiplos eventos (casamentos e aniversários) de múltiplos hosts. Nome e
+domínio decididos em 2026-06-25: **Celebrare** (celebrare.me).
 
 Este documento descreve o estado final desejado e as fases pra chegar lá.
 Não substitui @docs/domain-model.md nem @docs/visual-identity.md — quando a

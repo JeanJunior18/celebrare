@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { logoutHostAction } from '@/app/actions/auth.actions';
+import { BrandMark } from '@/components/brand-mark';
 import { CreateEventForm } from '@/components/forms/create-event-form';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -32,6 +33,7 @@ export default async function DashboardPage() {
 
     return (
       <main className="flex flex-1 flex-col">
+        <BrandMark />
         <SectionContainer title="Criar evento" subtitle="Escolha um tema e preencha os dados do seu evento.">
           <CreateEventForm themes={themes} />
         </SectionContainer>
@@ -41,7 +43,8 @@ export default async function DashboardPage() {
 
   return (
     <main className="flex flex-1 flex-col">
-      <SectionContainer title={event.honoreeName} subtitle={`Página pública: /e/${event.slug}`}>
+      <BrandMark />
+      <SectionContainer title={event.honoreeName} subtitle={`Página pública: celebrare.me/e/${event.slug}`}>
         <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-3">
           {managementLinks.map((link) => (
             <Link key={link.href} href={link.href}>

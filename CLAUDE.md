@@ -1,8 +1,13 @@
-# Arca do Davi — instruções de projeto
+# Celebrare — instruções de projeto
 
-Site de convite e RSVP para o aniversário de 1 ano do Davi. Página única,
-mobile-first; convidado nunca precisa de login. Em migração pra plataforma
-multi-evento — ver docs/saas-platform-plan.md.
+Plataforma multi-evento de convite e RSVP (celebrare.me) — cada host cria
+sua conta e gerencia o próprio evento (aniversário, casamento, etc.) num
+dashboard; convidado nunca precisa de login. Migração de "Arca do Davi"
+(site de aniversário de 1 ano do Davi, single-tenant) pra essa plataforma:
+ver docs/saas-platform-plan.md. O evento do Davi (`/e/arca-do-davi`,
+slug fixo em `src/app/page.tsx`) é o primeiro evento da plataforma — ainda
+sem host próprio (nunca passou por signup), administrado via `/internal/*`
+até o aniversário real (2026-07-11).
 
 ## Stack
 - Next.js 16 (App Router, Turbopack), TypeScript estrito, Tailwind CSS
