@@ -50,6 +50,15 @@ export class PostgresEventRepository implements EventRepository {
     return this.findOneWhere(eq(events.ownerUserId, ownerUserId));
   }
 
+  async listAll(): Promise<Event[]> {
+    const rows = await this.db.select({ event: events, theme: themes }).from(events).innerJoin(
+      themes,
+      eq(events.themeId, themes.id),
+    );
+
+    return rows.map((row) => toEvent(row.event, row.theme));
+  }
+
   async create(input: CreateEventInput): Promise<Event> {
     const [row] = await this.db
       .insert(events)

@@ -249,8 +249,24 @@ acontece em 2026-07-11 e o site já está no ar coletando RSVPs/presentes.
   tema/copy/título corretos, sem afetar o evento do Davi; (2) signup →
   criar evento pelo dashboard → adicionar presente → ver a página pública
   → RSVP de convidado → confirmar na lista de confirmações do dashboard.
-- [ ] **Fase 8 — Cutover**: cadastro público aberto; `/internal/*` passa a
-  servir só a visão de operador.
+- [~] **Fase 8 — Cutover** (`feat/saas`, 2026-06-25, parcial — decisão
+  deliberada de escopo): cadastro público em `/signup` já está aberto
+  desde a fase 5, sem convite/aprovação — nada a fazer aí. Adicionada a
+  visão de operador que faltava: `/internal/events` (lista todos os
+  eventos, com/sem host) e `/internal/themes` (lista + cria/edita tema via
+  formulário com textarea JSON pra `color_tokens`/`default_copy` — exatamente
+  a história "criar/editar temas sem deploy" do plano). **Decisão:**
+  `/internal/gifts` e `/internal/photos` **não foram removidos nem
+  redirecionados** — continuam administrando só o evento do Davi
+  (`getDaviEventId()`), porque é o único jeito de gerenciar esse evento
+  (não tem host: `owner_user_id` é null de propósito, fase 5) e o
+  aniversário real é em 2026-07-11, a ~2 semanas da data desta sessão.
+  Substituir esse caminho por completo (ex.: criar um host pro Davi e
+  migrar pro dashboard, ou apagar as rotas) é trabalho de uma sessão
+  futura, feito com calma e fora da janela do evento real — não nessa
+  sessão. Validado com lint, build, testes e fluxo real (listar eventos,
+  editar tema existente, criar tema novo — todos refletindo na hora, sem
+  deploy).
 
 ### Detalhe de cada fase
 

@@ -49,6 +49,10 @@ class FakeEventRepository implements EventRepository {
     return null;
   }
 
+  async listAll(): Promise<Event[]> {
+    return [];
+  }
+
   async create(input: CreateEventInput): Promise<Event> {
     this.created.push(input);
     return buildEvent({ slug: input.slug, honoreeName: input.honoreeName });
