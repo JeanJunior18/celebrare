@@ -50,6 +50,13 @@
       "when": 1782357481885,
       "tag": "0006_right_black_bolt",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1782358065255,
+      "tag": "0007_steady_the_captain",
+      "breakpoints": true
     }
   ]
 }

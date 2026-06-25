@@ -27,6 +27,13 @@
   `node`), nunca são importados pelo app.
 - Nenhuma variável de ambiente com chave do Supabase tem prefixo
   `NEXT_PUBLIC_`. Se aparecer uma, é bug — corrige antes de seguir.
+- `AUTH_SECRET` (assinatura dos JWT de sessão do Auth.js, fase 5) segue a
+  mesma regra: nunca `NEXT_PUBLIC_`, nunca importado por código client. Senha
+  de host nunca é armazenada em texto puro — só `password_hash` (bcryptjs,
+  ver `application/use-cases/register-host.use-case.ts`), e o hash nunca sai
+  de `domain/repositories/host-repository.ts`/`infrastructure/postgres/
+  host-repository.postgres.ts` — `authenticate-host.use-case.ts` devolve o
+  `Host` já sem o hash pro callback `authorize` do Auth.js.
 - Não adicione a diretiva `"use cache"` em nenhuma page, layout ou componente
   que leia `gift_items`, `rsvps` ou `guestbook_messages`. Esses dados
   precisam ser dinâmicos a cada request — cache aqui mostraria status de

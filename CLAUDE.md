@@ -1,7 +1,8 @@
 # Arca do Davi — instruções de projeto
 
 Site de convite e RSVP para o aniversário de 1 ano do Davi. Página única,
-mobile-first, sem autenticação de usuário público.
+mobile-first; convidado nunca precisa de login. Em migração pra plataforma
+multi-evento — ver docs/saas-platform-plan.md.
 
 ## Stack
 - Next.js 16 (App Router, Turbopack), TypeScript estrito, Tailwind CSS
@@ -9,6 +10,10 @@ mobile-first, sem autenticação de usuário público.
   dev, mesmo Postgres hospedado pela Supabase em produção por ora. Supabase
   em si segue só pra Storage (bucket `media`, público). Ver
   docs/saas-platform-plan.md (fase 1 — migração em andamento).
+- Autenticação de host: Auth.js (NextAuth v5) com Credentials provider
+  (email/senha, bcryptjs) + adapter Drizzle, sem OAuth por ora (fase 5).
+  Convidado nunca loga — isso é só pro dono do evento gerenciar seu próprio
+  evento (dashboard ainda não existe — fase 7).
 - Deploy: Vercel
 
 ## Comandos

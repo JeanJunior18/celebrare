@@ -191,8 +191,26 @@ acontece em 2026-07-11 e o site já está no ar coletando RSVPs/presentes.
   evento explicitamente. Validado com lint, testes, build e o fluxo real de
   novo (RSVP, claim, mural — todos com `event_id` preenchido
   automaticamente).
-- [ ] **Fase 5 — Auth.js**: tabelas `users`/`accounts`/`sessions`; signup/
-  login de host.
+- [x] **Fase 5 — Auth.js** (`feat/saas`, 2026-06-25): tabelas
+  `user`/`account`/`session`/`verificationToken` no schema Drizzle
+  (`src/infrastructure/postgres/schema.ts`, migration `0007`), formato
+  compatível com `@auth/drizzle-adapter` (PK `uuid`, não `text`, pra
+  consistência com o resto do schema). Só Credentials provider (email/senha
+  com `bcryptjs`) — sem OAuth, decisão confirmada com o usuário antes de
+  começar; `accounts`/`sessions`/`verificationToken` ficam sem uso por ora,
+  prontas pra quando algum provider OAuth entrar. Sessão é JWT (Credentials
+  não suporta sessão de banco). Camadas novas: `domain/entities/host.ts`,
+  `domain/repositories/host-repository.ts`,
+  `infrastructure/postgres/host-repository.postgres.ts`,
+  `application/use-cases/{register,authenticate}-host.use-case.ts`,
+  `infrastructure/auth/auth.ts` (único lugar autorizado a importar
+  `next-auth`), `app/actions/auth.actions.ts`, páginas `/signup` e `/login`.
+  `events.owner_user_id` ficou **nullable** — o evento do Davi não tem host
+  (foi criado direto pelo dev, sem inventar conta/senha fake); passa a ser
+  preenchido organicamente pelos eventos criados via signup, a partir da
+  fase 7. Validado com lint, testes, build e fluxo real (signup → sessão
+  JWT válida via `/api/auth/session`; login com senha certa funciona; senha
+  errada nega login sem criar sessão).
 - [ ] **Fase 6 — Storage**: interface `MediaStorage` em
   `src/infrastructure/storage/` + implementação S3-compatible.
 - [ ] **Fase 7 — Roteamento por slug + dashboard de host**:

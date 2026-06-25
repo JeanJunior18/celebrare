@@ -33,6 +33,12 @@ domain -> application -> infrastructure/app. Nunca o inverso.
   `@supabase/supabase-js`, hoje restrito ao Storage (bucket `media`, via
   `upload-image.ts` + `secret-server-client.ts`). Não lê nem escreve nas 5
   tabelas de domínio — isso é responsabilidade de `infrastructure/postgres/`.
+- `infrastructure/auth/auth.ts` — único lugar autorizado a importar
+  `next-auth`/`@auth/drizzle-adapter` (fase 5). O callback `authorize` do
+  Credentials provider não fala com o banco direto — instancia
+  `PostgresHostRepository` e chama o use case `authenticate-host`, mesmo
+  padrão de DI dos outros repositórios. `signIn`/`signOut` exportados daqui
+  são consumidos só por `app/actions/auth.actions.ts`.
 - `app/actions/` — Server Actions (`'use server'`). Composition root: é o
   único lugar que conecta uma implementação concreta de `infrastructure/` a
   um use case de `application/`. Sem lógica de negócio ou validação aqui —
@@ -55,9 +61,10 @@ domain -> application -> infrastructure/app. Nunca o inverso.
   mesmos formatos de resultado tipado pros casos esperados (ex:
   `{ success: false, reason: 'ALREADY_CLAIMED' }`), nunca lançar throw pra um
   resultado de negócio esperado.
-- **ISP** — quatro interfaces de repositório pequenas (`RsvpRepository`,
-  `GiftRepository`, `GuestbookRepository`, `GalleryRepository`). Nunca
-  fundir num repositório genérico.
+- **ISP** — interfaces de repositório pequenas, uma por domínio
+  (`RsvpRepository`, `GiftRepository`, `GuestbookRepository`,
+  `GalleryRepository`, `HostRepository`). Nunca fundir num repositório
+  genérico.
 - **DIP** — `application/use-cases/` e `app/actions/` dependem das
   interfaces em `domain/repositories/`, nunca de uma classe concreta do
   Postgres ou do Supabase diretamente.

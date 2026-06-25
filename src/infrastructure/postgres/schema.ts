@@ -1,4 +1,6 @@
-import { boolean, check, date, integer, jsonb, pgEnum, pgTable, text, time, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean, check, date, integer, jsonb, pgEnum, pgTable, primaryKey, text, time, timestamp, uuid,
+} from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 const createdAtColumn = () =>
@@ -78,11 +80,15 @@ export const themes = pgTable('themes', {
   createdAt: createdAtColumn(),
 });
 
-// Tenant raiz (docs/saas-platform-plan.md, fase 4). `owner_user_id` entra na
-// fase 5, junto da tabela `users` (Auth.js) — sem isso ainda não há
-// conceito de host pra ser dono do evento.
+// Tenant raiz (docs/saas-platform-plan.md, fase 4).
 export const events = pgTable('events', {
   id: uuid('id').primaryKey().defaultRandom(),
+  // Nullable de propósito: o evento do Davi foi criado direto pelo dev, sem
+  // passar por signup — não dá pra inventar uma conta/senha fake só pra
+  // preencher essa coluna. Fica null pra eventos "legados"/sem host
+  // cadastrado; passa a ser preenchida organicamente pelos novos eventos
+  // criados via signup (fase 7).
+  ownerUserId: uuid('owner_user_id').references(() => users.id),
   themeId: uuid('theme_id').notNull().references(() => themes.id),
   slug: text('slug').notNull().unique(),
   honoreeName: text('honoree_name').notNull(),
@@ -98,3 +104,51 @@ export const events = pgTable('events', {
   pixQrCodeUrl: text('pix_qr_code_url'),
   createdAt: createdAtColumn(),
 });
+
+// Tabelas de autenticação de host (docs/saas-platform-plan.md, fase 5).
+// Formato compatível com o adapter Drizzle do Auth.js (`@auth/drizzle-adapter`)
+// — únicas mudanças em relação ao default da lib: PKs `uuid` (em vez de
+// `text`) pra consistência com o resto do schema, e `passwordHash`/`createdAt`
+// extras em `users` pro login por credenciais (email/senha), já que o
+// Auth.js não guarda senha — isso é responsabilidade nossa.
+export const users = pgTable('user', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name'),
+  email: text('email').notNull().unique(),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  image: text('image'),
+  passwordHash: text('password_hash').notNull(),
+  createdAt: createdAtColumn(),
+});
+
+// Sem uso ainda (só Credentials provider, sem OAuth) — schema pronto pro
+// adapter sem precisar de migration extra quando um provider OAuth entrar.
+export const accounts = pgTable('account', {
+  userId: uuid('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  provider: text('provider').notNull(),
+  providerAccountId: text('providerAccountId').notNull(),
+  refresh_token: text('refresh_token'),
+  access_token: text('access_token'),
+  expires_at: integer('expires_at'),
+  token_type: text('token_type'),
+  scope: text('scope'),
+  id_token: text('id_token'),
+  session_state: text('session_state'),
+}, (table) => [primaryKey({ columns: [table.provider, table.providerAccountId] })]);
+
+// Sem uso ainda — Credentials provider usa sessão JWT (sem estado no banco).
+// Fica pronta pro caso de algum provider futuro precisar de sessão de banco.
+export const sessions = pgTable('session', {
+  sessionToken: text('sessionToken').primaryKey(),
+  userId: uuid('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
+});
+
+// Sem uso ainda — pra fluxo de verificação de email / magic link, não
+// implementado nessa fase (login é só email/senha).
+export const verificationTokens = pgTable('verificationToken', {
+  identifier: text('identifier').notNull(),
+  token: text('token').notNull(),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
+}, (table) => [primaryKey({ columns: [table.identifier, table.token] })]);
