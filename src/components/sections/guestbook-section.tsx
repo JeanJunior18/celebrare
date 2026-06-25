@@ -2,20 +2,22 @@ import { listGuestbookMessages } from '@/application/use-cases/list-guestbook-me
 import { GuestbookForm } from '@/components/forms/guestbook-form';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
+import type { Event } from '@/domain/entities/event';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresGuestbookRepository } from '@/infrastructure/postgres/guestbook-repository.postgres';
 
-export async function GuestbookSection() {
+export interface GuestbookSectionProps {
+  event: Event;
+}
+
+export async function GuestbookSection({ event }: GuestbookSectionProps) {
   const repository = new PostgresGuestbookRepository(db);
-  const messages = await listGuestbookMessages(repository);
+  const messages = await listGuestbookMessages(repository, event.id);
+  const { title, subtitle } = event.theme.defaultCopy.guestbook;
 
   return (
-    <SectionContainer
-      id="mensagens"
-      title="Mensagem para o Davi"
-      subtitle="Deixe aqui uma mensagem cheia de carinho para o nosso pequeno navegador!"
-    >
-      <GuestbookForm />
+    <SectionContainer id="mensagens" title={title} subtitle={subtitle}>
+      <GuestbookForm eventId={event.id} />
 
       {messages.length > 0 && (
         <div className="mt-10 grid w-full gap-4 md:grid-cols-2">

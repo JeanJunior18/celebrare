@@ -6,13 +6,15 @@ export type ClaimRegistryItemResult =
   | { success: false; reason: 'ALREADY_CLAIMED' };
 
 export interface GiftRepository {
-  listItems(): Promise<GiftItem[]>;
+  listItems(eventId: string): Promise<GiftItem[]>;
   claimRegistryItem(input: {
+    eventId: string;
     giftItemId: string;
     guestName: string;
     guestWhatsapp?: string;
   }): Promise<ClaimRegistryItemResult>;
   claimDiaperPack(input: {
+    eventId: string;
     giftItemId: string;
     guestName: string;
     guestWhatsapp?: string;

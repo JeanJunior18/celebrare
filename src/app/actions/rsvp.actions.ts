@@ -20,6 +20,7 @@ export async function confirmAttendanceAction(
     const repository = new PostgresRsvpRepository(db);
 
     return await confirmAttendance(repository, {
+      eventId: String(formData.get('eventId') ?? ''),
       guestName: String(formData.get('guestName') ?? ''),
       companionCount: Number(formData.get('companionCount') ?? 0),
       whatsappNumber: String(formData.get('whatsappNumber') ?? ''),

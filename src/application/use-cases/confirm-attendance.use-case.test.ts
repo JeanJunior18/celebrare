@@ -5,6 +5,8 @@ import type { RsvpRepository, RsvpUpsertResult } from '@/domain/repositories/rsv
 
 import { confirmAttendance } from './confirm-attendance.use-case';
 
+const VALID_UUID = '123e4567-e89b-12d3-a456-426614174000';
+
 class FakeRsvpRepository implements RsvpRepository {
   public upserted: Array<{
     guestName: string;
@@ -35,6 +37,7 @@ describe('confirmAttendance', () => {
     const repository = new FakeRsvpRepository({ status: 'CREATED' });
 
     const result = await confirmAttendance(repository, {
+      eventId: VALID_UUID,
       guestName: 'Maria',
       companionCount: 2,
       whatsappNumber: '(11) 91234-5678',
@@ -49,12 +52,14 @@ describe('confirmAttendance', () => {
     const repository = new FakeRsvpRepository({ status: 'CREATED' });
 
     await confirmAttendance(repository, {
+      eventId: VALID_UUID,
       guestName: 'Maria',
       companionCount: 0,
       whatsappNumber: '(86) 99916-7437',
       confirmUpdate: false,
     });
     await confirmAttendance(repository, {
+      eventId: VALID_UUID,
       guestName: 'Maria',
       companionCount: 0,
       whatsappNumber: '86999167437',
@@ -73,6 +78,7 @@ describe('confirmAttendance', () => {
     });
 
     const result = await confirmAttendance(repository, {
+      eventId: VALID_UUID,
       guestName: 'Maria',
       companionCount: 3,
       whatsappNumber: '(11) 91234-5678',
@@ -87,6 +93,7 @@ describe('confirmAttendance', () => {
 
     await expect(
       confirmAttendance(repository, {
+        eventId: VALID_UUID,
         guestName: 'Maria',
         companionCount: 0,
         whatsappNumber: '123',
@@ -100,6 +107,7 @@ describe('confirmAttendance', () => {
 
     await expect(
       confirmAttendance(repository, {
+        eventId: VALID_UUID,
         guestName: 'M',
         companionCount: 0,
         whatsappNumber: '(11) 91234-5678',

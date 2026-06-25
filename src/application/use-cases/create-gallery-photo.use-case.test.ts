@@ -6,6 +6,8 @@ import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery
 
 import { createGalleryPhoto } from './create-gallery-photo.use-case';
 
+const VALID_UUID = '123e4567-e89b-12d3-a456-426614174000';
+
 class FakeAdminGalleryRepository implements AdminGalleryRepository {
   public created: Array<Parameters<AdminGalleryRepository['createPhoto']>[0]> = [];
 
@@ -35,6 +37,7 @@ describe('createGalleryPhoto', () => {
     const repository = new FakeAdminGalleryRepository();
 
     const result = await createGalleryPhoto(repository, {
+      eventId: VALID_UUID,
       ageLabel: BabyAgeStage.SIX_MONTHS,
       displayOrder: 2,
       image: fakeImage(),
@@ -49,6 +52,7 @@ describe('createGalleryPhoto', () => {
 
     await expect(
       createGalleryPhoto(repository, {
+        eventId: VALID_UUID,
         ageLabel: BabyAgeStage.NEWBORN,
         displayOrder: -1,
         image: fakeImage(),

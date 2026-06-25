@@ -15,6 +15,7 @@ export async function claimRegistryItemAction(formData: FormData): Promise<GiftA
     const repository = new PostgresGiftRepository(db);
 
     const result = await claimRegistryItem(repository, {
+      eventId: String(formData.get('eventId') ?? ''),
       giftItemId: String(formData.get('giftItemId') ?? ''),
       guestName: String(formData.get('guestName') ?? ''),
       guestWhatsapp: formData.get('guestWhatsapp')?.toString() || undefined,
@@ -35,6 +36,7 @@ export async function claimDiaperPackAction(formData: FormData): Promise<GiftAct
     const repository = new PostgresGiftRepository(db);
 
     await claimDiaperPack(repository, {
+      eventId: String(formData.get('eventId') ?? ''),
       giftItemId: String(formData.get('giftItemId') ?? ''),
       guestName: String(formData.get('guestName') ?? ''),
       guestWhatsapp: formData.get('guestWhatsapp')?.toString() || undefined,

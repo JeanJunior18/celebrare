@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { RsvpRepository, RsvpUpsertResult } from '@/domain/repositories/rsvp-repository';
 
 const confirmAttendanceInputSchema = z.object({
+  eventId: z.string().uuid(),
   guestName: z.string().min(2),
   companionCount: z.number().int().nonnegative(),
   // Normaliza pra só dígitos antes de validar — assim "(86) 99916-7437" e

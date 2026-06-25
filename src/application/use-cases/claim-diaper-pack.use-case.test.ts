@@ -44,6 +44,7 @@ describe('claimDiaperPack', () => {
     const repository = new FakeGiftRepository();
 
     const result = await claimDiaperPack(repository, {
+      eventId: VALID_UUID,
       giftItemId: VALID_UUID,
       guestName: 'Maria',
       quantity: 9999,
@@ -56,7 +57,7 @@ describe('claimDiaperPack', () => {
     const repository = new FakeGiftRepository();
 
     await expect(
-      claimDiaperPack(repository, { giftItemId: VALID_UUID, guestName: 'Maria', quantity: 0 }),
+      claimDiaperPack(repository, { eventId: VALID_UUID, giftItemId: VALID_UUID, guestName: 'Maria', quantity: 0 }),
     ).rejects.toThrow();
   });
 });

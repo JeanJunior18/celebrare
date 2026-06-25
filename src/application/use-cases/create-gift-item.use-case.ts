@@ -6,6 +6,7 @@ import type { AdminGiftRepository } from '@/domain/repositories/admin-gift-repos
 
 const createGiftItemInputSchema = z
   .object({
+    eventId: z.string().uuid(),
     name: z.string().min(2),
     description: z.string().optional(),
     category: z.enum(GiftCategory),

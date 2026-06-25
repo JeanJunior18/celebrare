@@ -7,10 +7,12 @@ export type RsvpUpsertResult =
 
 export interface RsvpRepository {
   upsert(input: {
+    eventId: string;
     guestName: string;
     companionCount: number;
     whatsappNumber: string;
     confirmUpdate: boolean;
   }): Promise<RsvpUpsertResult>;
-  listAll(): Promise<Rsvp[]>; // só deve ser chamado por código que usa service role
+  // só deve ser chamado por código autenticado de host/operador, nunca por convidado.
+  listAll(eventId: string): Promise<Rsvp[]>;
 }

@@ -3,9 +3,10 @@ import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 
 export interface AdminGalleryRepository {
   createPhoto(input: {
+    eventId: string;
     ageLabel: BabyAgeStage;
     displayOrder: number;
     image: File;
   }): Promise<GalleryPhoto>;
-  getNextDisplayOrder(): Promise<number>;
+  getNextDisplayOrder(eventId: string): Promise<number>;
 }

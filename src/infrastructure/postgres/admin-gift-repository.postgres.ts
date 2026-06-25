@@ -21,6 +21,7 @@ export class PostgresAdminGiftRepository implements AdminGiftRepository {
   ) {}
 
   async createItem(input: {
+    eventId: string;
     name: string;
     description?: string;
     category: GiftCategory;
@@ -39,6 +40,7 @@ export class PostgresAdminGiftRepository implements AdminGiftRepository {
       .insert(giftItems)
       .values({
         id,
+        eventId: input.eventId,
         name: input.name,
         description: input.description ?? null,
         imageUrl,

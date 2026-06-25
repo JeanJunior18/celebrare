@@ -2,6 +2,7 @@ import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery
 
 export async function getNextGalleryDisplayOrder(
   repository: AdminGalleryRepository,
+  eventId: string,
 ): Promise<number> {
-  return repository.getNextDisplayOrder();
+  return repository.getNextDisplayOrder(eventId);
 }

@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GiftClaim } from '@/domain/entities/gift-claim';
@@ -26,19 +26,20 @@ function toGiftItem(row: typeof giftItems.$inferSelect): GiftItem {
 export class PostgresGiftRepository implements GiftRepository {
   constructor(private readonly db: NodePgDatabase<typeof schema>) {}
 
-  async listItems(): Promise<GiftItem[]> {
-    const rows = await this.db.select().from(giftItems);
+  async listItems(eventId: string): Promise<GiftItem[]> {
+    const rows = await this.db.select().from(giftItems).where(eq(giftItems.eventId, eventId));
     return rows.map(toGiftItem);
   }
 
   async claimRegistryItem(input: {
+    eventId: string;
     giftItemId: string;
     guestName: string;
     guestWhatsapp?: string;
   }): Promise<ClaimRegistryItemResult> {
     try {
       const { rows } = await this.db.execute<ClaimGiftItemRow>(sql`
-        select * from claim_gift_item(${input.giftItemId}, ${input.guestName}, ${input.guestWhatsapp ?? null})
+        select * from claim_gift_item(${input.eventId}, ${input.giftItemId}, ${input.guestName}, ${input.guestWhatsapp ?? null})
       `);
       const row = rows[0];
 
@@ -62,6 +63,7 @@ export class PostgresGiftRepository implements GiftRepository {
   }
 
   async claimDiaperPack(input: {
+    eventId: string;
     giftItemId: string;
     guestName: string;
     guestWhatsapp?: string;
@@ -70,6 +72,7 @@ export class PostgresGiftRepository implements GiftRepository {
     const [claim] = await this.db
       .insert(giftClaims)
       .values({
+        eventId: input.eventId,
         giftItemId: input.giftItemId,
         guestName: input.guestName,
         guestWhatsapp: input.guestWhatsapp ?? null,

@@ -3,6 +3,7 @@ import type { GiftCategory } from '@/domain/enums/gift-category';
 
 export interface AdminGiftRepository {
   createItem(input: {
+    eventId: string;
     name: string;
     description?: string;
     category: GiftCategory;

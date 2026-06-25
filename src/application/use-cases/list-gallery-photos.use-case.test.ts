@@ -21,7 +21,7 @@ describe('listGalleryPhotos', () => {
     ];
     const repository = new FakeGalleryRepository(photos);
 
-    const result = await listGalleryPhotos(repository);
+    const result = await listGalleryPhotos(repository, 'event-1');
 
     expect(result).toEqual(photos);
   });

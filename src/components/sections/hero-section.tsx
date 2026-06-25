@@ -1,9 +1,16 @@
 import Image from 'next/image';
 import { Badge } from '@/components/ui/Badge';
 import { HeartDivider } from '@/components/ui/SectionContainer';
-import { eventConfig } from '@/config/event.config';
+import type { Event } from '@/domain/entities/event';
 
-export function HeroSection() {
+export interface HeroSectionProps {
+  event: Event;
+}
+
+export function HeroSection({ event }: HeroSectionProps) {
+  const { eyebrow, intro, titlePrefix, tagline } = event.theme.defaultCopy.hero;
+  const imageUrl = event.heroImageUrl ?? event.theme.defaultIllustrationUrl;
+
   return (
     <section id="inicio" className="relative w-full overflow-hidden px-6 pt-20 pb-16 md:pt-28 md:pb-24">
       <div
@@ -18,41 +25,40 @@ export function HeroSection() {
       <div className="relative mx-auto flex max-w-xl flex-col items-center text-center lg:max-w-5xl lg:flex-row lg:items-center lg:gap-16 lg:text-left">
         <div className="flex flex-col items-center lg:items-start">
           <p className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-primary-600 lg:hidden">
-            Você está convidado para embarcar na
+            {eyebrow}
           </p>
           <p className="hidden max-w-md font-body text-base leading-relaxed text-ink-soft lg:order-2 lg:mt-6 lg:block">
-            Há 1 ano, Davi Asher chegou e trouxe ainda mais alegria para a nossa família. 
-            Chegou a hora de celebrar seu 1º aniversário ao lado de pessoas especiais.
+            {intro}
           </p>
 
           <h1 className="mt-3 font-display text-3xl uppercase tracking-[0.1em] text-primary-700 lg:order-1 lg:mt-0 lg:text-4xl">
-            Arca do
+            {titlePrefix}
           </h1>
           <p className="font-script text-6xl leading-none text-primary-700 lg:order-1 lg:text-7xl">
-            {eventConfig.childName}
+            {event.honoreeName}
           </p>
 
-          <Badge className="mt-4 px-5 py-2 text-base lg:order-1">{eventConfig.ageLabel}</Badge>
+          <Badge className="mt-4 px-5 py-2 text-base lg:order-1">{event.subtitleLabel}</Badge>
 
           <div className="mt-4 lg:order-1">
             <HeartDivider />
           </div>
 
-          <p className="mt-4 max-w-xs font-script text-2xl text-primary-600 lg:hidden">
-            Vai ser uma grande aventura com você!
-          </p>
+          <p className="mt-4 max-w-xs font-script text-2xl text-primary-600 lg:hidden">{tagline}</p>
         </div>
 
-        <div className="relative mt-10 h-48 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary-200/60 shadow-card lg:mt-0 lg:h-80 lg:flex-1">
-          <Image
-            src="/hero-davi.jpg"
-            alt={`Foto de ${eventConfig.childName}`}
-            fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-cover object-top"
-            priority
-          />
-        </div>
+        {imageUrl && (
+          <div className="relative mt-10 h-48 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary-200/60 shadow-card lg:mt-0 lg:h-80 lg:flex-1">
+            <Image
+              src={imageUrl}
+              alt={`Foto de ${event.honoreeName}`}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover object-top"
+              priority
+            />
+          </div>
+        )}
       </div>
     </section>
   );

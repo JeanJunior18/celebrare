@@ -23,27 +23,20 @@ const nunito = Nunito({
 });
 
 const siteUrl = 'https://arca-do-davi.asherlabs.com.br';
-const title = 'Arca do Davi — 1 aninho';
-const description = 'Convite e confirmação de presença pro aniversário de 1 ano do Davi.';
 
+// Fallback genérico — `/` e `/e/[slug]` sobrescrevem via `generateMetadata`
+// depois de buscar o evento (docs/saas-platform-plan.md, fase 7). Páginas
+// sem evento (`/login`, `/signup`, `/internal/*`) usam esse default.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title,
-  description,
+  title: 'Convites e confirmação de presença',
+  description: 'Crie e gerencie o convite e a confirmação de presença do seu evento.',
   openGraph: {
-    title,
-    description,
-    url: siteUrl,
-    siteName: 'Arca do Davi',
     locale: 'pt_BR',
     type: 'website',
-    images: [{ url: '/hero-davi.jpg', width: 3024, height: 2833, alt: 'Davi' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title,
-    description,
-    images: ['/hero-davi.jpg'],
   },
 };
 

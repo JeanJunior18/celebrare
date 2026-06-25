@@ -5,6 +5,8 @@ import type { GuestbookRepository } from '@/domain/repositories/guestbook-reposi
 
 import { leaveGuestbookMessage } from './leave-guestbook-message.use-case';
 
+const VALID_UUID = '123e4567-e89b-12d3-a456-426614174000';
+
 class FakeGuestbookRepository implements GuestbookRepository {
   async create(input: { guestName: string; message: string }): Promise<GuestbookMessage> {
     return { id: 'id', isApproved: true, createdAt: '', ...input };
@@ -20,6 +22,7 @@ describe('leaveGuestbookMessage', () => {
     const repository = new FakeGuestbookRepository();
 
     const result = await leaveGuestbookMessage(repository, {
+      eventId: VALID_UUID,
       guestName: 'Maria',
       message: 'Parabéns, Davi!',
     });
@@ -31,7 +34,7 @@ describe('leaveGuestbookMessage', () => {
     const repository = new FakeGuestbookRepository();
 
     await expect(
-      leaveGuestbookMessage(repository, { guestName: 'Maria', message: 'a'.repeat(501) }),
+      leaveGuestbookMessage(repository, { eventId: VALID_UUID, guestName: 'Maria', message: 'a'.repeat(501) }),
     ).rejects.toThrow();
   });
 
@@ -39,7 +42,7 @@ describe('leaveGuestbookMessage', () => {
     const repository = new FakeGuestbookRepository();
 
     await expect(
-      leaveGuestbookMessage(repository, { guestName: 'Maria', message: '' }),
+      leaveGuestbookMessage(repository, { eventId: VALID_UUID, guestName: 'Maria', message: '' }),
     ).rejects.toThrow();
   });
 });

@@ -40,6 +40,7 @@ describe('claimRegistryItem', () => {
     const repository = new FakeGiftRepository({ success: true, claim });
 
     const result = await claimRegistryItem(repository, {
+      eventId: VALID_UUID,
       giftItemId: VALID_UUID,
       guestName: 'Maria',
     });
@@ -51,6 +52,7 @@ describe('claimRegistryItem', () => {
     const repository = new FakeGiftRepository({ success: false, reason: 'ALREADY_CLAIMED' });
 
     const result = await claimRegistryItem(repository, {
+      eventId: VALID_UUID,
       giftItemId: VALID_UUID,
       guestName: 'Maria',
     });
@@ -62,7 +64,7 @@ describe('claimRegistryItem', () => {
     const repository = new FakeGiftRepository({ success: false, reason: 'ALREADY_CLAIMED' });
 
     await expect(
-      claimRegistryItem(repository, { giftItemId: 'not-a-uuid', guestName: 'Maria' }),
+      claimRegistryItem(repository, { eventId: VALID_UUID, giftItemId: 'not-a-uuid', guestName: 'Maria' }),
     ).rejects.toThrow();
   });
 });

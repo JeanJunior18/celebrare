@@ -7,7 +7,11 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 
-export function GuestbookForm() {
+export interface GuestbookFormProps {
+  eventId: string;
+}
+
+export function GuestbookForm({ eventId }: GuestbookFormProps) {
   const [state, formAction, isPending] = useActionState(leaveMessageAction, null);
 
   if (state?.success) {
@@ -16,6 +20,7 @@ export function GuestbookForm() {
 
   return (
     <form action={formAction} className="flex w-full max-w-md flex-col gap-4">
+      <input type="hidden" name="eventId" value={eventId} />
       <Input label="Seu nome" name="guestName" placeholder="Digite seu nome" required minLength={2} />
       <Textarea
         label="Mensagem"

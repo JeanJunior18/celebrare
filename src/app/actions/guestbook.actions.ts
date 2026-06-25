@@ -17,6 +17,7 @@ export async function leaveMessageAction(
     const repository = new PostgresGuestbookRepository(db);
 
     await leaveGuestbookMessage(repository, {
+      eventId: String(formData.get('eventId') ?? ''),
       guestName: String(formData.get('guestName') ?? ''),
       message: String(formData.get('message') ?? ''),
     });

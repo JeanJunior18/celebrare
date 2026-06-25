@@ -9,6 +9,7 @@ import { GiftStatus } from '@/domain/enums/gift-status';
 
 export interface GiftGalleryProps {
   items: GiftItem[];
+  eventId: string;
 }
 
 const PAGE_SIZE = 6;
@@ -41,7 +42,7 @@ function sortItems(items: GiftItem[], sortBy: SortOption): GiftItem[] {
   }
 }
 
-export function GiftGallery({ items }: GiftGalleryProps) {
+export function GiftGallery({ items, eventId }: GiftGalleryProps) {
   const [sortBy, setSortBy] = useState<SortOption>('AVAILABLE_FIRST');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const sortedItems = useMemo(() => sortItems(items, sortBy), [items, sortBy]);
@@ -80,7 +81,7 @@ export function GiftGallery({ items }: GiftGalleryProps) {
 
       <div className="grid w-full gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {visibleItems.map((item) => (
-          <GiftCard key={item.id} item={item} />
+          <GiftCard key={item.id} item={item} eventId={eventId} />
         ))}
       </div>
 

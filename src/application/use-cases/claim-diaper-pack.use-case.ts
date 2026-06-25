@@ -4,6 +4,7 @@ import type { GiftClaim } from '@/domain/entities/gift-claim';
 import type { GiftRepository } from '@/domain/repositories/gift-repository';
 
 const claimDiaperPackInputSchema = z.object({
+  eventId: z.string().uuid(),
   giftItemId: z.string().uuid(),
   guestName: z.string().min(2),
   guestWhatsapp: z.string().optional(),

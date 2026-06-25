@@ -7,6 +7,8 @@ import type { AdminGiftRepository } from '@/domain/repositories/admin-gift-repos
 
 import { createGiftItem } from './create-gift-item.use-case';
 
+const VALID_UUID = '123e4567-e89b-12d3-a456-426614174000';
+
 class FakeAdminGiftRepository implements AdminGiftRepository {
   public created: Array<Parameters<AdminGiftRepository['createItem']>[0]> = [];
 
@@ -36,6 +38,7 @@ describe('createGiftItem', () => {
     const repository = new FakeAdminGiftRepository();
 
     const result = await createGiftItem(repository, {
+      eventId: VALID_UUID,
       name: 'Berço portátil',
       category: GiftCategory.REGISTRY_ITEM,
       quantityNeeded: 1,
@@ -50,6 +53,7 @@ describe('createGiftItem', () => {
     const repository = new FakeAdminGiftRepository();
 
     await createGiftItem(repository, {
+      eventId: VALID_UUID,
       name: 'Pacote de fraldas G',
       category: GiftCategory.DIAPER_PACK,
       sizeLabel: 'G',
@@ -64,6 +68,7 @@ describe('createGiftItem', () => {
 
     await expect(
       createGiftItem(repository, {
+        eventId: VALID_UUID,
         name: 'A',
         category: GiftCategory.REGISTRY_ITEM,
         quantityNeeded: 1,
@@ -76,6 +81,7 @@ describe('createGiftItem', () => {
     const repository = new FakeAdminGiftRepository();
 
     await createGiftItem(repository, {
+      eventId: VALID_UUID,
       name: 'Berço portátil',
       category: GiftCategory.REGISTRY_ITEM,
       quantityNeeded: 1,
@@ -90,6 +96,7 @@ describe('createGiftItem', () => {
 
     await expect(
       createGiftItem(repository, {
+        eventId: VALID_UUID,
         name: 'Berço portátil',
         category: GiftCategory.REGISTRY_ITEM,
         quantityNeeded: 1,

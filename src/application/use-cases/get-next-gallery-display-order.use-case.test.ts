@@ -28,7 +28,7 @@ describe('getNextGalleryDisplayOrder', () => {
   it('repassa o próximo display_order do repositório', async () => {
     const repository = new FakeAdminGalleryRepository(3);
 
-    const result = await getNextGalleryDisplayOrder(repository);
+    const result = await getNextGalleryDisplayOrder(repository, 'event-1');
 
     expect(result).toBe(3);
   });
@@ -36,7 +36,7 @@ describe('getNextGalleryDisplayOrder', () => {
   it('funciona quando a galeria está vazia', async () => {
     const repository = new FakeAdminGalleryRepository(0);
 
-    const result = await getNextGalleryDisplayOrder(repository);
+    const result = await getNextGalleryDisplayOrder(repository, 'event-1');
 
     expect(result).toBe(0);
   });

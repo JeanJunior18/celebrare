@@ -7,8 +7,11 @@ export interface ListGiftItemsResult {
   diaperPacks: GiftItem[];
 }
 
-export async function listGiftItems(giftRepository: GiftRepository): Promise<ListGiftItemsResult> {
-  const items = await giftRepository.listItems();
+export async function listGiftItems(
+  giftRepository: GiftRepository,
+  eventId: string,
+): Promise<ListGiftItemsResult> {
+  const items = await giftRepository.listItems(eventId);
 
   return {
     registryItems: items.filter((item) => item.category === GiftCategory.REGISTRY_ITEM),

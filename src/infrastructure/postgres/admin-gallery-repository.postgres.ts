@@ -1,4 +1,4 @@
-import { desc } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
@@ -21,6 +21,7 @@ export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
   ) {}
 
   async createPhoto(input: {
+    eventId: string;
     ageLabel: BabyAgeStage;
     displayOrder: number;
     image: File;
@@ -36,6 +37,7 @@ export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
       .insert(galleryPhotos)
       .values({
         id,
+        eventId: input.eventId,
         ageLabel: input.ageLabel,
         imageUrl,
         displayOrder: input.displayOrder,
@@ -45,10 +47,11 @@ export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
     return toGalleryPhoto(photo);
   }
 
-  async getNextDisplayOrder(): Promise<number> {
+  async getNextDisplayOrder(eventId: string): Promise<number> {
     const [last] = await this.db
       .select({ displayOrder: galleryPhotos.displayOrder })
       .from(galleryPhotos)
+      .where(eq(galleryPhotos.eventId, eventId))
       .orderBy(desc(galleryPhotos.displayOrder))
       .limit(1);
 

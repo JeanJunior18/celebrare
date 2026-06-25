@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { Rsvp } from '@/domain/entities/rsvp';
@@ -17,13 +17,14 @@ export class PostgresRsvpRepository implements RsvpRepository {
   constructor(private readonly db: NodePgDatabase<typeof schema>) {}
 
   async upsert(input: {
+    eventId: string;
     guestName: string;
     companionCount: number;
     whatsappNumber: string;
     confirmUpdate: boolean;
   }): Promise<RsvpUpsertResult> {
     const { rows } = await this.db.execute<UpsertRsvpRow>(sql`
-      select * from upsert_rsvp(${input.guestName}, ${input.companionCount}, ${input.whatsappNumber}, ${input.confirmUpdate})
+      select * from upsert_rsvp(${input.eventId}, ${input.guestName}, ${input.companionCount}, ${input.whatsappNumber}, ${input.confirmUpdate})
     `);
     const row = rows[0];
 
@@ -38,7 +39,7 @@ export class PostgresRsvpRepository implements RsvpRepository {
     return { status: row.status };
   }
 
-  async listAll(): Promise<Rsvp[]> {
-    return this.db.select().from(rsvps);
+  async listAll(eventId: string): Promise<Rsvp[]> {
+    return this.db.select().from(rsvps).where(eq(rsvps.eventId, eventId));
   }
 }

@@ -26,6 +26,7 @@ const daviEvent = {
   eventTime: '16:30',
   venueName: 'Sítio Portugal Eventos',
   venueAddress: 'Av. 1º de Maio, 341 — São Francisco, Codó - MA, 65400-000',
+  heroImageUrl: '/hero-davi.jpg',
   googleMapsUrl: 'https://share.google/s5jo6eSNwlZ0iKPZM',
   quoteText: 'Dois a dois eles entraram na arca, como Deus havia ordenado a Noé.',
   quoteReference: 'Gênesis 7:9',
@@ -48,10 +49,10 @@ async function main() {
   const { rows: eventRows } = await pool.query(
     `insert into events (
        theme_id, slug, honoree_name, subtitle_label, event_date, event_time,
-       venue_name, venue_address, google_maps_url, quote_text, quote_reference,
-       pix_key, pix_qr_code_url
+       venue_name, venue_address, hero_image_url, google_maps_url, quote_text,
+       quote_reference, pix_key, pix_qr_code_url
      )
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
      on conflict (slug) do update set
        theme_id = excluded.theme_id,
        honoree_name = excluded.honoree_name,
@@ -60,6 +61,7 @@ async function main() {
        event_time = excluded.event_time,
        venue_name = excluded.venue_name,
        venue_address = excluded.venue_address,
+       hero_image_url = excluded.hero_image_url,
        google_maps_url = excluded.google_maps_url,
        quote_text = excluded.quote_text,
        quote_reference = excluded.quote_reference,
@@ -75,6 +77,7 @@ async function main() {
       daviEvent.eventTime,
       daviEvent.venueName,
       daviEvent.venueAddress,
+      daviEvent.heroImageUrl,
       daviEvent.googleMapsUrl,
       daviEvent.quoteText,
       daviEvent.quoteReference,

@@ -1,4 +1,4 @@
-import { asc } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
@@ -15,8 +15,12 @@ function toGalleryPhoto(row: typeof galleryPhotos.$inferSelect): GalleryPhoto {
 export class PostgresGalleryRepository implements GalleryRepository {
   constructor(private readonly db: NodePgDatabase<typeof schema>) {}
 
-  async listOrdered(): Promise<GalleryPhoto[]> {
-    const rows = await this.db.select().from(galleryPhotos).orderBy(asc(galleryPhotos.displayOrder));
+  async listOrdered(eventId: string): Promise<GalleryPhoto[]> {
+    const rows = await this.db
+      .select()
+      .from(galleryPhotos)
+      .where(eq(galleryPhotos.eventId, eventId))
+      .orderBy(asc(galleryPhotos.displayOrder));
     return rows.map(toGalleryPhoto);
   }
 }

@@ -51,7 +51,7 @@ describe('listGiftItems', () => {
       buildGiftItem({ id: '3', category: GiftCategory.REGISTRY_ITEM }),
     ]);
 
-    const result = await listGiftItems(repository);
+    const result = await listGiftItems(repository, 'event-1');
 
     expect(result.registryItems.map((item) => item.id)).toEqual(['1', '3']);
     expect(result.diaperPacks.map((item) => item.id)).toEqual(['2']);

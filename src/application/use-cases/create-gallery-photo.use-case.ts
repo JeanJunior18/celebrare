@@ -5,6 +5,7 @@ import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
 import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery-repository';
 
 const createGalleryPhotoInputSchema = z.object({
+  eventId: z.string().uuid(),
   ageLabel: z.enum(BabyAgeStage),
   displayOrder: z.number().int().nonnegative(),
   image: z.instanceof(File),

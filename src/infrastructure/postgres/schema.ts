@@ -1,5 +1,5 @@
 import {
-  boolean, check, date, integer, jsonb, pgEnum, pgTable, primaryKey, text, time, timestamp, uuid,
+  boolean, check, date, integer, jsonb, pgEnum, pgTable, primaryKey, text, time, timestamp, unique, uuid,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -18,16 +18,21 @@ export const babyAgeStageEnum = pgEnum('baby_age_stage', [
 
 export const rsvps = pgTable('rsvps', {
   id: uuid('id').primaryKey().defaultRandom(),
-  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
+  eventId: uuid('event_id').notNull().references(() => events.id),
   guestName: text('guest_name').notNull(),
   companionCount: integer('companion_count').notNull().default(0),
-  whatsappNumber: text('whatsapp_number').notNull().unique(),
+  // Único por evento, não globalmente — a mesma pessoa pode confirmar
+  // presença em dois eventos diferentes (fase 7).
+  whatsappNumber: text('whatsapp_number').notNull(),
   createdAt: createdAtColumn(),
-}, (table) => [check('companion_count_non_negative', sql`${table.companionCount} >= 0`)]);
+}, (table) => [
+  check('companion_count_non_negative', sql`${table.companionCount} >= 0`),
+  unique().on(table.eventId, table.whatsappNumber),
+]);
 
 export const giftItems = pgTable('gift_items', {
   id: uuid('id').primaryKey().defaultRandom(),
-  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
+  eventId: uuid('event_id').notNull().references(() => events.id),
   name: text('name').notNull(),
   description: text('description'),
   imageUrl: text('image_url'),
@@ -42,7 +47,7 @@ export const giftItems = pgTable('gift_items', {
 
 export const giftClaims = pgTable('gift_claims', {
   id: uuid('id').primaryKey().defaultRandom(),
-  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
+  eventId: uuid('event_id').notNull().references(() => events.id),
   giftItemId: uuid('gift_item_id').notNull().references(() => giftItems.id, { onDelete: 'cascade' }),
   guestName: text('guest_name').notNull(),
   guestWhatsapp: text('guest_whatsapp'),
@@ -52,7 +57,7 @@ export const giftClaims = pgTable('gift_claims', {
 
 export const guestbookMessages = pgTable('guestbook_messages', {
   id: uuid('id').primaryKey().defaultRandom(),
-  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
+  eventId: uuid('event_id').notNull().references(() => events.id),
   guestName: text('guest_name').notNull(),
   message: text('message').notNull(),
   isApproved: boolean('is_approved').notNull().default(true),
@@ -61,7 +66,7 @@ export const guestbookMessages = pgTable('guestbook_messages', {
 
 export const galleryPhotos = pgTable('gallery_photos', {
   id: uuid('id').primaryKey().defaultRandom(),
-  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
+  eventId: uuid('event_id').notNull().references(() => events.id),
   ageLabel: babyAgeStageEnum('age_label').notNull(),
   imageUrl: text('image_url').notNull(),
   displayOrder: integer('display_order').notNull(),
@@ -97,6 +102,10 @@ export const events = pgTable('events', {
   eventTime: time('event_time').notNull(),
   venueName: text('venue_name').notNull(),
   venueAddress: text('venue_address').notNull(),
+  // Foto real do hero (não a ilustração genérica do tema) — ex.: a foto do
+  // Davi em /hero-davi.jpg. Nullable: sem foto, a seção usa
+  // theme.defaultIllustrationUrl como fallback.
+  heroImageUrl: text('hero_image_url'),
   googleMapsUrl: text('google_maps_url'),
   quoteText: text('quote_text'),
   quoteReference: text('quote_reference'),

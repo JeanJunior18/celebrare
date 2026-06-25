@@ -24,7 +24,7 @@ describe('listGuestbookMessages', () => {
     ];
     const repository = new FakeGuestbookRepository(messages);
 
-    const result = await listGuestbookMessages(repository);
+    const result = await listGuestbookMessages(repository, 'event-1');
 
     expect(result).toEqual(messages);
   });

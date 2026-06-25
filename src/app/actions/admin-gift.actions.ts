@@ -3,8 +3,9 @@
 import { createGiftItem } from '@/application/use-cases/create-gift-item.use-case';
 import type { GiftCategory } from '@/domain/enums/gift-category';
 import { fetchOpenGraphMetadata } from '@/infrastructure/http/open-graph-metadata';
-import { db } from '@/infrastructure/postgres/client';
 import { PostgresAdminGiftRepository } from '@/infrastructure/postgres/admin-gift-repository.postgres';
+import { db } from '@/infrastructure/postgres/client';
+import { getDaviEventId } from '@/infrastructure/postgres/davi-event-id';
 import { createMediaStorage } from '@/infrastructure/storage/s3-media-storage';
 
 export interface AdminGiftActionResult {
@@ -23,6 +24,7 @@ export async function createGiftItemAction(
     const image = imageField instanceof File && imageField.size > 0 ? imageField : undefined;
 
     await createGiftItem(repository, {
+      eventId: await getDaviEventId(),
       name: String(formData.get('name') ?? ''),
       description: formData.get('description')?.toString() || undefined,
       category: formData.get('category') as GiftCategory,

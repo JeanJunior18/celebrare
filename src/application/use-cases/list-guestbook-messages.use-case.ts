@@ -3,6 +3,7 @@ import type { GuestbookRepository } from '@/domain/repositories/guestbook-reposi
 
 export async function listGuestbookMessages(
   guestbookRepository: GuestbookRepository,
+  eventId: string,
 ): Promise<GuestbookMessage[]> {
-  return guestbookRepository.listApproved();
+  return guestbookRepository.listApproved(eventId);
 }

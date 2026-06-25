@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GuestbookMessage } from '@/domain/entities/guestbook-message';
@@ -10,16 +10,19 @@ import type * as schema from './schema';
 export class PostgresGuestbookRepository implements GuestbookRepository {
   constructor(private readonly db: NodePgDatabase<typeof schema>) {}
 
-  async create(input: { guestName: string; message: string }): Promise<GuestbookMessage> {
+  async create(input: { eventId: string; guestName: string; message: string }): Promise<GuestbookMessage> {
     const [message] = await this.db
       .insert(guestbookMessages)
-      .values({ guestName: input.guestName, message: input.message })
+      .values({ eventId: input.eventId, guestName: input.guestName, message: input.message })
       .returning();
 
     return message;
   }
 
-  async listApproved(): Promise<GuestbookMessage[]> {
-    return this.db.select().from(guestbookMessages).where(eq(guestbookMessages.isApproved, true));
+  async listApproved(eventId: string): Promise<GuestbookMessage[]> {
+    return this.db
+      .select()
+      .from(guestbookMessages)
+      .where(and(eq(guestbookMessages.eventId, eventId), eq(guestbookMessages.isApproved, true)));
   }
 }
