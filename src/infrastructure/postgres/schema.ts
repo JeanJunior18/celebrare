@@ -1,4 +1,4 @@
-import { boolean, check, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, check, date, integer, jsonb, pgEnum, pgTable, text, time, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 const createdAtColumn = () =>
@@ -16,6 +16,7 @@ export const babyAgeStageEnum = pgEnum('baby_age_stage', [
 
 export const rsvps = pgTable('rsvps', {
   id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
   guestName: text('guest_name').notNull(),
   companionCount: integer('companion_count').notNull().default(0),
   whatsappNumber: text('whatsapp_number').notNull().unique(),
@@ -24,6 +25,7 @@ export const rsvps = pgTable('rsvps', {
 
 export const giftItems = pgTable('gift_items', {
   id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
   name: text('name').notNull(),
   description: text('description'),
   imageUrl: text('image_url'),
@@ -38,6 +40,7 @@ export const giftItems = pgTable('gift_items', {
 
 export const giftClaims = pgTable('gift_claims', {
   id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
   giftItemId: uuid('gift_item_id').notNull().references(() => giftItems.id, { onDelete: 'cascade' }),
   guestName: text('guest_name').notNull(),
   guestWhatsapp: text('guest_whatsapp'),
@@ -47,6 +50,7 @@ export const giftClaims = pgTable('gift_claims', {
 
 export const guestbookMessages = pgTable('guestbook_messages', {
   id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
   guestName: text('guest_name').notNull(),
   message: text('message').notNull(),
   isApproved: boolean('is_approved').notNull().default(true),
@@ -55,6 +59,7 @@ export const guestbookMessages = pgTable('guestbook_messages', {
 
 export const galleryPhotos = pgTable('gallery_photos', {
   id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id').notNull().default(sql`default_event_id()`).references(() => events.id),
   ageLabel: babyAgeStageEnum('age_label').notNull(),
   imageUrl: text('image_url').notNull(),
   displayOrder: integer('display_order').notNull(),
@@ -70,5 +75,26 @@ export const themes = pgTable('themes', {
   colorTokens: jsonb('color_tokens').notNull(),
   defaultCopy: jsonb('default_copy').notNull(),
   defaultIllustrationUrl: text('default_illustration_url'),
+  createdAt: createdAtColumn(),
+});
+
+// Tenant raiz (docs/saas-platform-plan.md, fase 4). `owner_user_id` entra na
+// fase 5, junto da tabela `users` (Auth.js) — sem isso ainda não há
+// conceito de host pra ser dono do evento.
+export const events = pgTable('events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  themeId: uuid('theme_id').notNull().references(() => themes.id),
+  slug: text('slug').notNull().unique(),
+  honoreeName: text('honoree_name').notNull(),
+  subtitleLabel: text('subtitle_label').notNull(),
+  eventDate: date('event_date').notNull(),
+  eventTime: time('event_time').notNull(),
+  venueName: text('venue_name').notNull(),
+  venueAddress: text('venue_address').notNull(),
+  googleMapsUrl: text('google_maps_url'),
+  quoteText: text('quote_text'),
+  quoteReference: text('quote_reference'),
+  pixKey: text('pix_key'),
+  pixQrCodeUrl: text('pix_qr_code_url'),
   createdAt: createdAtColumn(),
 });

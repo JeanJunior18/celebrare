@@ -177,9 +177,20 @@ acontece em 2026-07-11 e o site já está no ar coletando RSVPs/presentes.
   existir o primeiro evento desse tema. **Sem wiring no app ainda** — a
   tabela só passa a ser lida quando `events.theme_id` existir (fase 4); até
   lá nenhum componente foi alterado.
-- [ ] **Fase 4 — `events` + `event_id`**: tabela `events`; `event_id`
-  nullable nas 5 tabelas; seed do evento do Davi; coluna `not null` só
-  depois do backfill.
+- [x] **Fase 4 — `events` + `event_id`** (`feat/saas`, 2026-06-25): tabela
+  `events` criada (sem `owner_user_id` ainda — entra na fase 5, junto da
+  tabela `users`); `event_id` adicionado nas 5 tabelas (nullable → backfill
+  → `not null`, migrations `0003`–`0004`); seed do evento do Davi em
+  `scripts/seed-davi-event.mjs` (`npm run db:seed-davi-event`), com dados de
+  `event.config.ts` e tema `BIRTHDAY`. Como nenhum repositório passa
+  `event_id` explicitamente ainda (isso só chega na fase 7), criei a
+  function `default_event_id()` (migration `0005`) como `DEFAULT` da coluna
+  nas 5 tabelas (migration `0006`) — mantém os caminhos de escrita atuais
+  (RSVP, claim de presente, mural) funcionando sem tocar em código.
+  Documentado no schema pra ser removido quando o app passar a escolher o
+  evento explicitamente. Validado com lint, testes, build e o fluxo real de
+  novo (RSVP, claim, mural — todos com `event_id` preenchido
+  automaticamente).
 - [ ] **Fase 5 — Auth.js**: tabelas `users`/`accounts`/`sessions`; signup/
   login de host.
 - [ ] **Fase 6 — Storage**: interface `MediaStorage` em
