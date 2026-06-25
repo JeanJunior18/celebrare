@@ -1,4 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { MediaStorage } from './media-storage';
 
 export function imageExtension(image: File): string {
   if (image.type.includes('png')) return 'png';
@@ -6,24 +6,13 @@ export function imageExtension(image: File): string {
   return 'jpg';
 }
 
-export async function uploadImageToMedia(
-  client: SupabaseClient,
-  path: string,
-  image: File,
-): Promise<string> {
+export async function uploadImageToMedia(storage: MediaStorage, path: string, image: File): Promise<string> {
   const buffer = Buffer.from(await image.arrayBuffer());
-
-  const { error } = await client.storage
-    .from('media')
-    .upload(path, buffer, { upsert: true, contentType: image.type });
-  if (error) throw error;
-
-  const { data } = client.storage.from('media').getPublicUrl(path);
-  return data.publicUrl;
+  return storage.upload(path, buffer, image.type);
 }
 
 export async function uploadRemoteImageToMedia(
-  client: SupabaseClient,
+  storage: MediaStorage,
   basePath: string,
   imageUrl: string,
 ): Promise<string> {
@@ -35,11 +24,5 @@ export async function uploadRemoteImageToMedia(
   const ext = contentType.includes('png') ? 'png' : contentType.includes('webp') ? 'webp' : 'jpg';
   const path = `${basePath}.${ext}`;
 
-  const { error } = await client.storage
-    .from('media')
-    .upload(path, buffer, { upsert: true, contentType });
-  if (error) throw error;
-
-  const { data } = client.storage.from('media').getPublicUrl(path);
-  return data.publicUrl;
+  return storage.upload(path, buffer, contentType);
 }

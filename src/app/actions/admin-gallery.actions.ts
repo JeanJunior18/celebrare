@@ -7,7 +7,7 @@ import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gal
 import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresAdminGalleryRepository } from '@/infrastructure/postgres/admin-gallery-repository.postgres';
-import { createSecretServerClient } from '@/infrastructure/supabase/secret-server-client';
+import { createMediaStorage } from '@/infrastructure/storage/s3-media-storage';
 
 export interface AdminGalleryActionResult {
   success: boolean;
@@ -15,7 +15,7 @@ export interface AdminGalleryActionResult {
 }
 
 export async function getNextGalleryDisplayOrderAction(): Promise<number> {
-  const repository = new PostgresAdminGalleryRepository(db, createSecretServerClient());
+  const repository = new PostgresAdminGalleryRepository(db, createMediaStorage());
   return getNextGalleryDisplayOrder(repository);
 }
 
@@ -24,7 +24,7 @@ export async function createGalleryPhotoAction(
   formData: FormData,
 ): Promise<AdminGalleryActionResult> {
   try {
-    const repository = new PostgresAdminGalleryRepository(db, createSecretServerClient());
+    const repository = new PostgresAdminGalleryRepository(db, createMediaStorage());
 
     await createGalleryPhoto(repository, {
       ageLabel: formData.get('ageLabel') as BabyAgeStage,

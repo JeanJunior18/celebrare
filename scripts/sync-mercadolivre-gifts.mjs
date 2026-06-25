@@ -13,7 +13,7 @@
 //   npx playwright install chromium   (só na primeira vez)
 //   node scripts/sync-mercadolivre-gifts.mjs
 
-import { createClient } from '@supabase/supabase-js';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -69,7 +69,7 @@ function cleanPermalink(href) {
   return url.toString();
 }
 
-async function uploadImage(supabase, itemId, imageUrl) {
+async function uploadImage(s3, publicUrlBase, itemId, imageUrl) {
   const response = await fetch(imageUrl);
   if (!response.ok) throw new Error(`Falha ao baixar imagem de ${itemId}: HTTP ${response.status}`);
   const buffer = Buffer.from(await response.arrayBuffer());
@@ -77,24 +77,30 @@ async function uploadImage(supabase, itemId, imageUrl) {
   const ext = contentType.includes('jpeg') ? 'jpg' : contentType.includes('png') ? 'png' : 'webp';
   const storagePath = `gifts/${itemId}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from('media')
-    .upload(storagePath, buffer, { upsert: true, contentType });
-  if (error) throw error;
+  await s3.send(
+    new PutObjectCommand({ Bucket: 'media', Key: storagePath, Body: buffer, ContentType: contentType }),
+  );
 
-  const { data } = supabase.storage.from('media').getPublicUrl(storagePath);
-  return data.publicUrl;
+  return `${publicUrlBase}/${storagePath}`;
 }
 
 async function main() {
   const supabaseUrl = requireEnv('SUPABASE_URL');
-  const secretKey = requireEnv('SUPABASE_SECRET_KEY');
   const databaseUrl = requireEnv('DATABASE_URL');
   const affiliateTool = requireEnv('MERCADOLIVRE_AFFILIATE_TOOL');
   const wishlistUrl = requireEnv('MERCADOLIVRE_WISHLIST_URL');
 
   const giftList = JSON.parse(readFileSync(path.join(__dirname, 'gift-list.json'), 'utf8'));
-  const supabase = createClient(supabaseUrl, secretKey);
+  const s3 = new S3Client({
+    region: requireEnv('S3_REGION'),
+    endpoint: requireEnv('S3_ENDPOINT'),
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: requireEnv('S3_ACCESS_KEY_ID'),
+      secretAccessKey: requireEnv('S3_SECRET_ACCESS_KEY'),
+    },
+  });
+  const publicUrlBase = `${supabaseUrl}/storage/v1/object/public/media`;
   const pool = new Pool({ connectionString: databaseUrl });
 
   console.log(`Renderizando ${wishlistUrl}...`);
@@ -117,7 +123,7 @@ async function main() {
     }
 
     console.log(`Sincronizando ${entry.itemId} — ${card.title}`);
-    const imageUrl = await uploadImage(supabase, entry.itemId, card.image);
+    const imageUrl = await uploadImage(s3, publicUrlBase, entry.itemId, card.image);
     const purchaseUrl = `${cleanPermalink(card.href)}?matt_tool=${affiliateTool}`;
 
     const { rows: existingRows } = await pool.query(

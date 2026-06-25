@@ -1,30 +1,30 @@
 # Security rules (não-negociáveis)
 
-- Arquivos com `'use client'` no topo nunca importam `@supabase/supabase-js`,
-  `drizzle-orm`/`pg`, nem nada de `src/infrastructure/`. Se um componente
+- Arquivos com `'use client'` no topo nunca importam `drizzle-orm`/`pg`,
+  `@aws-sdk/client-s3`, nem nada de `src/infrastructure/`. Se um componente
   precisa de dado do servidor, busque num Server Component pai e passe via
   props, ou chame uma Server Action de `src/app/actions/`.
 - `DATABASE_URL` (acesso direto ao Postgres via Drizzle, em
   `src/infrastructure/postgres/`) nunca aparece em código que entra no
-  bundle do client, pelo mesmo motivo das chaves do Supabase abaixo — é uma
-  connection string com privilégio total sobre as 5 tabelas de domínio, sem
-  RLS de PostgREST no caminho. Desde a migração pra Drizzle
-  (docs/saas-platform-plan.md, fase 1), é esse client — não mais o
-  `@supabase/supabase-js` com chave `anon`/`publishable` — quem lê/escreve
-  `rsvps`, `gift_items`, `gift_claims`, `guestbook_messages` e
-  `gallery_photos`. RLS continua habilitada nas tabelas hospedadas pela
-  Supabase como defesa em profundidade, mas deixou de ser a camada
-  decisória de autorização — essa responsabilidade é do código em
-  `src/infrastructure/postgres/` e `src/application/use-cases/`, que só é
-  alcançável a partir de Server Components/Actions.
-- `SUPABASE_SECRET_KEY` hoje é usada apenas pro Supabase Storage (bucket
-  `media`): em `src/infrastructure/supabase/secret-server-client.ts`,
-  consumido por `app/actions/admin-gift.actions.ts` e
-  `app/actions/admin-gallery.actions.ts` (upload de imagem antes do insert
-  via Postgres) e por `scripts/sync-mercadolivre-gifts.mjs`. Nunca deve
-  aparecer dentro de `src/components/`, nem em nenhum arquivo que entre no
-  bundle do client — scripts em `scripts/` rodam fora do Next.js (via
-  `node`), nunca são importados pelo app.
+  bundle do client — é uma connection string com privilégio total sobre as
+  tabelas de domínio, sem RLS de PostgREST no caminho. Desde a migração pra
+  Drizzle (docs/saas-platform-plan.md, fase 1), é esse client quem lê/escreve
+  `rsvps`, `gift_items`, `gift_claims`, `guestbook_messages`,
+  `gallery_photos`, `events`, `themes` e as tabelas de auth. RLS continua
+  habilitada nas tabelas hospedadas pela Supabase como defesa em
+  profundidade, mas deixou de ser a camada decisória de autorização — essa
+  responsabilidade é do código em `src/infrastructure/postgres/` e
+  `src/application/use-cases/`, que só é alcançável a partir de Server
+  Components/Actions.
+- `S3_ACCESS_KEY_ID`/`S3_SECRET_ACCESS_KEY` (Supabase Storage S3 Connection,
+  fase 6) seguem a mesma regra: só em `src/infrastructure/storage/` (via
+  `createS3Client()`/`createMediaStorage()`), consumidos por
+  `app/actions/admin-gift.actions.ts`, `app/actions/admin-gallery.actions.ts`
+  e `scripts/sync-mercadolivre-gifts.mjs`. Nunca em `src/components/`, nem
+  em nenhum arquivo que entre no bundle do client. Não existe mais
+  `@supabase/supabase-js` nem `SUPABASE_SECRET_KEY` no projeto — storage de
+  mídia também passou a ser um protocolo genérico (S3), não mais o SDK do
+  Supabase.
 - Nenhuma variável de ambiente com chave do Supabase tem prefixo
   `NEXT_PUBLIC_`. Se aparecer uma, é bug — corrige antes de seguir.
 - `AUTH_SECRET` (assinatura dos JWT de sessão do Auth.js, fase 5) segue a

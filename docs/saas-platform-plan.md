@@ -211,8 +211,19 @@ acontece em 2026-07-11 e o site já está no ar coletando RSVPs/presentes.
   fase 7. Validado com lint, testes, build e fluxo real (signup → sessão
   JWT válida via `/api/auth/session`; login com senha certa funciona; senha
   errada nega login sem criar sessão).
-- [ ] **Fase 6 — Storage**: interface `MediaStorage` em
-  `src/infrastructure/storage/` + implementação S3-compatible.
+- [x] **Fase 6 — Storage** (`feat/saas`, 2026-06-25): port `MediaStorage`
+  (`upload(path, data, contentType)`) + adapter `S3MediaStorage`
+  (`@aws-sdk/client-s3`) em `src/infrastructure/storage/`, contra o
+  endpoint S3-compatible do Supabase Storage (env vars `S3_*`, geradas pelo
+  usuário em Project Settings → Storage → S3 Connection). Trocados:
+  `PostgresAdminGiftRepository`/`PostgresAdminGalleryRepository` (recebem
+  `MediaStorage` em vez de `SupabaseClient`),
+  `scripts/sync-mercadolivre-gifts.mjs`. `src/infrastructure/supabase/`
+  removido por completo (ficou vazio) e `@supabase/supabase-js` desinstalado
+  — não há mais nenhum uso da lib no projeto, DB e Storage são ambos
+  protocolos genéricos agora. Validado com lint, build, testes e upload
+  real pela UI de `/internal/gifts` — confirmei a imagem acessível
+  publicamente na URL do bucket antes de limpar o dado de teste.
 - [ ] **Fase 7 — Roteamento por slug + dashboard de host**:
   `src/app/e/[slug]/page.tsx` público; `src/app/dashboard/` autenticado.
 - [ ] **Fase 8 — Cutover**: cadastro público aberto; `/internal/*` passa a

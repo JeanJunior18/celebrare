@@ -7,9 +7,12 @@ multi-evento — ver docs/saas-platform-plan.md.
 ## Stack
 - Next.js 16 (App Router, Turbopack), TypeScript estrito, Tailwind CSS
 - Dados: Postgres direto via Drizzle ORM + `pg` (`DATABASE_URL`) — local em
-  dev, mesmo Postgres hospedado pela Supabase em produção por ora. Supabase
-  em si segue só pra Storage (bucket `media`, público). Ver
+  dev, mesmo Postgres hospedado pela Supabase em produção por ora. Ver
   docs/saas-platform-plan.md (fase 1 — migração em andamento).
+- Storage de mídia: S3-compatible (`@aws-sdk/client-s3`,
+  `src/infrastructure/storage/`) contra o endpoint S3 do Supabase Storage
+  (bucket `media`) — fase 6. Não existe mais `@supabase/supabase-js` no
+  projeto.
 - Autenticação de host: Auth.js (NextAuth v5) com Credentials provider
   (email/senha, bcryptjs) + adapter Drizzle, sem OAuth por ora (fase 5).
   Convidado nunca loga — isso é só pro dono do evento gerenciar seu próprio
@@ -28,10 +31,9 @@ multi-evento — ver docs/saas-platform-plan.md.
 
 ## Regras inegociáveis (segurança)
 Detalhe completo em `.claude/rules/security.md` (carregado em toda sessão).
-Resumo: nenhuma chave do Supabase nem `DATABASE_URL` chega ao browser;
-`SUPABASE_SECRET_KEY` hoje só serve pro Supabase Storage; nenhuma env var do
-Supabase tem prefixo `NEXT_PUBLIC_`; não usar `"use cache"` em dados
-mutáveis (`gift_items`, `rsvps`, `guestbook_messages`).
+Resumo: nenhuma chave (Supabase, `DATABASE_URL`, `S3_*`, `AUTH_SECRET`) chega
+ao browser; nenhuma tem prefixo `NEXT_PUBLIC_`; não usar `"use cache"` em
+dados mutáveis (`gift_items`, `rsvps`, `guestbook_messages`).
 
 ## Arquitetura
 Camadas em `src/domain/ -> src/application/ -> src/infrastructure/ -> src/app/`.

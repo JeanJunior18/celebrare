@@ -1,11 +1,11 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { desc } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
 import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery-repository';
-import { imageExtension, uploadImageToMedia } from '@/infrastructure/supabase/upload-image';
+import type { MediaStorage } from '@/infrastructure/storage/media-storage';
+import { imageExtension, uploadImageToMedia } from '@/infrastructure/storage/upload-image';
 
 import { galleryPhotos } from './schema';
 import type * as schema from './schema';
@@ -17,7 +17,7 @@ function toGalleryPhoto(row: typeof galleryPhotos.$inferSelect): GalleryPhoto {
 export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
   constructor(
     private readonly db: NodePgDatabase<typeof schema>,
-    private readonly storageClient: SupabaseClient,
+    private readonly storage: MediaStorage,
   ) {}
 
   async createPhoto(input: {
@@ -27,7 +27,7 @@ export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
   }): Promise<GalleryPhoto> {
     const id = crypto.randomUUID();
     const imageUrl = await uploadImageToMedia(
-      this.storageClient,
+      this.storage,
       `gallery/${id}.${imageExtension(input.image)}`,
       input.image,
     );

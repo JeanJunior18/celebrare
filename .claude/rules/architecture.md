@@ -29,10 +29,16 @@ domain -> application -> infrastructure/app. Nunca o inverso.
   (`src/infrastructure/postgres/migrations/`); os repositórios chamam essas
   functions via SQL crua (`db.execute(sql\`select * from ...\`)`), nunca
   reimplementam essa lógica em TypeScript.
-- `infrastructure/supabase/` — único lugar do projeto autorizado a importar
-  `@supabase/supabase-js`, hoje restrito ao Storage (bucket `media`, via
-  `upload-image.ts` + `secret-server-client.ts`). Não lê nem escreve nas 5
-  tabelas de domínio — isso é responsabilidade de `infrastructure/postgres/`.
+- `infrastructure/storage/` — port `MediaStorage` (`upload(path, data,
+  contentType): Promise<string>`) + adapter `S3MediaStorage`
+  (`@aws-sdk/client-s3`, fase 6), único lugar autorizado a importar esse
+  SDK. Aponta hoje pro endpoint S3-compatible do Supabase Storage (bucket
+  `media`) via env vars `S3_*`; trocar de provider (R2, S3 real) é só mudar
+  essas env vars e a URL pública em `createMediaStorage()`
+  (`s3-media-storage.ts`), sem tocar nos repositórios que chamam
+  `uploadImageToMedia`/`uploadRemoteImageToMedia` (`upload-image.ts`). Não
+  existe mais `@supabase/supabase-js` no projeto — DB e Storage são ambos
+  acessados por protocolos genéricos (Postgres direto, S3).
 - `infrastructure/auth/auth.ts` — único lugar autorizado a importar
   `next-auth`/`@auth/drizzle-adapter` (fase 5). O callback `authorize` do
   Credentials provider não fala com o banco direto — instancia
@@ -51,7 +57,7 @@ domain -> application -> infrastructure/app. Nunca o inverso.
 
 ## Mapeamento SOLID
 
-- **SRP** — um componente de formulário nunca chama o Supabase direto; um
+- **SRP** — um componente de formulário nunca chama o Postgres/S3 direto; um
   repositório nunca decide regra de negócio; um use case nunca renderiza nada.
 - **OCP** — o comportamento por categoria de presente (`REGISTRY_ITEM` vs
   `DIAPER_PACK`) é um strategy map indexado por `GiftCategory`, não um

@@ -5,7 +5,7 @@ import type { GiftCategory } from '@/domain/enums/gift-category';
 import { fetchOpenGraphMetadata } from '@/infrastructure/http/open-graph-metadata';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresAdminGiftRepository } from '@/infrastructure/postgres/admin-gift-repository.postgres';
-import { createSecretServerClient } from '@/infrastructure/supabase/secret-server-client';
+import { createMediaStorage } from '@/infrastructure/storage/s3-media-storage';
 
 export interface AdminGiftActionResult {
   success: boolean;
@@ -17,7 +17,7 @@ export async function createGiftItemAction(
   formData: FormData,
 ): Promise<AdminGiftActionResult> {
   try {
-    const repository = new PostgresAdminGiftRepository(db, createSecretServerClient());
+    const repository = new PostgresAdminGiftRepository(db, createMediaStorage());
 
     const imageField = formData.get('image');
     const image = imageField instanceof File && imageField.size > 0 ? imageField : undefined;

@@ -1,11 +1,11 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GiftItem } from '@/domain/entities/gift-item';
 import { GiftCategory } from '@/domain/enums/gift-category';
 import { GiftStatus } from '@/domain/enums/gift-status';
 import type { AdminGiftRepository } from '@/domain/repositories/admin-gift-repository';
-import { imageExtension, uploadImageToMedia, uploadRemoteImageToMedia } from '@/infrastructure/supabase/upload-image';
+import type { MediaStorage } from '@/infrastructure/storage/media-storage';
+import { imageExtension, uploadImageToMedia, uploadRemoteImageToMedia } from '@/infrastructure/storage/upload-image';
 
 import { giftItems } from './schema';
 import type * as schema from './schema';
@@ -17,7 +17,7 @@ function toGiftItem(row: typeof giftItems.$inferSelect): GiftItem {
 export class PostgresAdminGiftRepository implements AdminGiftRepository {
   constructor(
     private readonly db: NodePgDatabase<typeof schema>,
-    private readonly storageClient: SupabaseClient,
+    private readonly storage: MediaStorage,
   ) {}
 
   async createItem(input: {
@@ -32,8 +32,8 @@ export class PostgresAdminGiftRepository implements AdminGiftRepository {
   }): Promise<GiftItem> {
     const id = crypto.randomUUID();
     const imageUrl = input.image
-      ? await uploadImageToMedia(this.storageClient, `gifts/${id}.${imageExtension(input.image)}`, input.image)
-      : await uploadRemoteImageToMedia(this.storageClient, `gifts/${id}`, input.imageUrl!);
+      ? await uploadImageToMedia(this.storage, `gifts/${id}.${imageExtension(input.image)}`, input.image)
+      : await uploadRemoteImageToMedia(this.storage, `gifts/${id}`, input.imageUrl!);
 
     const [item] = await this.db
       .insert(giftItems)
