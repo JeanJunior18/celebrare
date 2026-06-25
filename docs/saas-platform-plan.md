@@ -224,8 +224,31 @@ acontece em 2026-07-11 e o site já está no ar coletando RSVPs/presentes.
   protocolos genéricos agora. Validado com lint, build, testes e upload
   real pela UI de `/internal/gifts` — confirmei a imagem acessível
   publicamente na URL do bucket antes de limpar o dado de teste.
-- [ ] **Fase 7 — Roteamento por slug + dashboard de host**:
-  `src/app/e/[slug]/page.tsx` público; `src/app/dashboard/` autenticado.
+- [x] **Fase 7 — Roteamento por slug + dashboard de host** (`feat/saas`,
+  2026-06-25): `src/app/e/[slug]/page.tsx` (público, qualquer evento) e
+  `src/app/page.tsx` (slug fixo `arca-do-davi`) compartilham
+  `<EventPage>`, que renderiza as 9 seções via props (`event` + `event.theme`)
+  em vez de `eventConfig`/strings hardcoded; cores do tema injetadas via
+  `<style>` com custom properties (`themeCssVariables`); `generateMetadata`
+  por página (title/OG/Twitter) usando `react.cache()` pra não duplicar a
+  query do evento. Correções de correção multi-tenant que apareceram no
+  caminho: unique de `rsvps` passou a ser `(event_id, whatsapp_number)` —
+  era global; `event_id` passou a ser explícito em todo repositório/use
+  case/action/form (RSVP, claim de presente — incluindo `claim_gift_item`
+  validar que o item pertence ao evento informado —, mural, admin), e o
+  `default_event_id()` da fase 4 foi removido por já não ter consumidor.
+  Dashboard em `src/app/dashboard/` (gate por `auth()`): sem evento próprio
+  → form de criação (tema + dados); com evento → links pra
+  `gifts`/`gallery`/`rsvps`, reaproveitando `AdminGiftForm`/`AdminPhotoForm`
+  via prop de `action` em vez de duplicar componente.
+  `/internal/gifts`/`/internal/photos` continuam administrando só o evento
+  do Davi por enquanto (helper `getDaviEventId()`) — substituí-los de fato
+  é trabalho do cutover (fase 8). Validado com lint, testes (+3 novos pro
+  `create-event.use-case`), build e dois fluxos reais de ponta a ponta: (1)
+  evento `WEDDING` criado direto no banco, renderizado em `/e/[slug]` com
+  tema/copy/título corretos, sem afetar o evento do Davi; (2) signup →
+  criar evento pelo dashboard → adicionar presente → ver a página pública
+  → RSVP de convidado → confirmar na lista de confirmações do dashboard.
 - [ ] **Fase 8 — Cutover**: cadastro público aberto; `/internal/*` passa a
   servir só a visão de operador.
 

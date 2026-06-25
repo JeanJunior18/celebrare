@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from '
 import {
   createGalleryPhotoAction,
   getNextGalleryDisplayOrderAction,
+  type AdminGalleryActionResult,
 } from '@/app/actions/admin-gallery.actions';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -30,7 +31,20 @@ interface SubmitResult {
   message?: string;
 }
 
-export function AdminPhotoForm() {
+export interface AdminPhotoFormProps {
+  // Mesmo motivo do `action` em AdminGiftForm — reaproveitado pelo
+  // dashboard de host (fase 7) com actions que resolvem o eventId da sessão.
+  createPhotoAction?: (
+    state: AdminGalleryActionResult | null,
+    formData: FormData,
+  ) => Promise<AdminGalleryActionResult>;
+  getNextDisplayOrder?: () => Promise<number>;
+}
+
+export function AdminPhotoForm({
+  createPhotoAction = createGalleryPhotoAction,
+  getNextDisplayOrder = getNextGalleryDisplayOrderAction,
+}: AdminPhotoFormProps) {
   const [photos, setPhotos] = useState<SelectedPhoto[]>([]);
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
@@ -72,7 +86,7 @@ export function AdminPhotoForm() {
     let firstError: string | undefined;
 
     try {
-      const baseDisplayOrder = await getNextGalleryDisplayOrderAction();
+      const baseDisplayOrder = await getNextDisplayOrder();
 
       for (const [index, photo] of photos.entries()) {
         const photoFormData = new FormData();
@@ -80,7 +94,7 @@ export function AdminPhotoForm() {
         photoFormData.set('displayOrder', String(baseDisplayOrder + index));
         photoFormData.set('image', photo.file);
 
-        const photoResult = await createGalleryPhotoAction(null, photoFormData);
+        const photoResult = await createPhotoAction(null, photoFormData);
         if (photoResult.success) {
           addedCount += 1;
         } else {

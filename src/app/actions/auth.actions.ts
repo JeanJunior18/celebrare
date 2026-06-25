@@ -4,7 +4,7 @@ import { AuthError } from 'next-auth';
 import { ZodError } from 'zod';
 
 import { registerHost } from '@/application/use-cases/register-host.use-case';
-import { signIn } from '@/infrastructure/auth/auth';
+import { signIn, signOut } from '@/infrastructure/auth/auth';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresHostRepository } from '@/infrastructure/postgres/host-repository.postgres';
 
@@ -60,4 +60,8 @@ export async function loginHostAction(
     }
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
   }
+}
+
+export async function logoutHostAction(): Promise<void> {
+  await signOut({ redirectTo: '/login' });
 }

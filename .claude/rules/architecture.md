@@ -54,6 +54,15 @@ domain -> application -> infrastructure/app. Nunca o inverso.
 - `components/sections/` — um componente por seção de domínio (Hero, Rsvp,
   GiftRegistry, Gallery, Guestbook, Footer). Server Component por padrão; só
   a folha interativa (um formulário, um botão de claim) é Client Component.
+  Cada seção recebe `event: Event` via prop (nunca busca `eventConfig`
+  hardcoded) — `<EventPage>` (`components/event-page.tsx`) é a composição
+  raiz, compartilhada por `app/page.tsx` (slug fixo do Davi) e
+  `app/e/[slug]/page.tsx` (fase 7).
+- `app/dashboard/` — área autenticada do host (gate via `auth()` +
+  `redirect('/login')`), só gerencia o evento do próprio host
+  (`events.owner_user_id`). Reaproveita `AdminGiftForm`/`AdminPhotoForm` de
+  `/internal/*` passando uma action diferente por prop, em vez de duplicar
+  o componente — mesma forma e validação, dono diferente.
 
 ## Mapeamento SOLID
 
@@ -69,8 +78,8 @@ domain -> application -> infrastructure/app. Nunca o inverso.
   resultado de negócio esperado.
 - **ISP** — interfaces de repositório pequenas, uma por domínio
   (`RsvpRepository`, `GiftRepository`, `GuestbookRepository`,
-  `GalleryRepository`, `HostRepository`). Nunca fundir num repositório
-  genérico.
+  `GalleryRepository`, `HostRepository`, `EventRepository`,
+  `ThemeRepository`). Nunca fundir num repositório genérico.
 - **DIP** — `application/use-cases/` e `app/actions/` dependem das
   interfaces em `domain/repositories/`, nunca de uma classe concreta do
   Postgres ou do Supabase diretamente.

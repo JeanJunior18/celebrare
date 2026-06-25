@@ -31,4 +31,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    // Sessão JWT não carrega `id` por padrão — o dashboard precisa dele pra
+    // achar o evento do host (`events.owner_user_id`), ver
+    // `src/infrastructure/auth/next-auth.d.ts`.
+    jwt({ token, user }) {
+      if (user) token.id = user.id;
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) session.user.id = token.id as string;
+      return session;
+    },
+  },
 });
