@@ -15,6 +15,13 @@
       "when": 1782354940407,
       "tag": "0001_functions_and_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782356577295,
+      "tag": "0002_wise_micromax",
+      "breakpoints": true
     }
   ]
 }

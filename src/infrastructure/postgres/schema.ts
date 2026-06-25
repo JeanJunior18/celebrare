@@ -1,4 +1,4 @@
-import { boolean, check, integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, check, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 const createdAtColumn = () =>
@@ -58,4 +58,17 @@ export const galleryPhotos = pgTable('gallery_photos', {
   ageLabel: babyAgeStageEnum('age_label').notNull(),
   imageUrl: text('image_url').notNull(),
   displayOrder: integer('display_order').notNull(),
+});
+
+// Tema é dado, não enum — permite adicionar um 3º tema sem deploy de
+// código (docs/saas-platform-plan.md, fase 3). Ainda não consumida pelo
+// app: passa a ser lida quando `events.theme_id` existir (fase 4).
+export const themes = pgTable('themes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  name: text('name').notNull(),
+  colorTokens: jsonb('color_tokens').notNull(),
+  defaultCopy: jsonb('default_copy').notNull(),
+  defaultIllustrationUrl: text('default_illustration_url'),
+  createdAt: createdAtColumn(),
 });

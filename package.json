@@ -10,7 +10,8 @@
     "test": "vitest run",
     "sync:gifts": "node --env-file=.env scripts/sync-mercadolivre-gifts.mjs",
     "db:generate": "node --env-file=.env node_modules/.bin/drizzle-kit generate",
-    "db:migrate": "node --env-file=.env scripts/migrate-postgres.mjs"
+    "db:migrate": "node --env-file=.env scripts/migrate-postgres.mjs",
+    "db:seed-themes": "node --env-file=.env scripts/seed-themes.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",

@@ -150,6 +150,47 @@ whatsapp, overshoot de fralda):
 Ordem pensada pra não quebrar a produção atual — o evento real do Davi
 acontece em 2026-07-11 e o site já está no ar coletando RSVPs/presentes.
 
+### Checklist de progresso
+
+- [x] **Fase 1 — Trocar camada de dados** (`feat/saas`, 2026-06-24): Drizzle +
+  `pg` instalados; schema das 5 tabelas em
+  `src/infrastructure/postgres/schema.ts`; 6 repositórios novos em
+  `src/infrastructure/postgres/` substituindo os `*.supabase.ts`; storage de
+  mídia continua 100% Supabase. Validado com lint, testes unitários, `next
+  build` e um fluxo real (RSVP, claim de presente, mural) contra Postgres
+  local. **Pendente:** `DATABASE_URL` de produção (rodando só local até
+  aqui) — precisa apontar pra connection string do Postgres hospedado pela
+  Supabase antes de mergear `feat/saas` em `main`.
+- [x] **Fase 2 — Migrations via Drizzle Kit** (parcial): baseline gerada em
+  `src/infrastructure/postgres/migrations/` (`0000_graceful_hellcat.sql` +
+  `0001_functions_and_triggers.sql`, espelhando `supabase/migrations/`).
+  **Pendente:** aposentar de fato `supabase/migrations/` e o CLI da Supabase
+  como ferramenta de migração — só faz sentido depois do cutover de
+  produção da fase 1, pra não ter duas fontes de verdade de schema ao mesmo
+  tempo.
+- [x] **Fase 3 — `themes`** (`feat/saas`, 2026-06-25): tabela criada
+  (`src/infrastructure/postgres/schema.ts` + migration `0002_wise_micromax.sql`);
+  seed idempotente em `scripts/seed-themes.mjs` (`npm run db:seed-themes`)
+  pros 2 temas. `BIRTHDAY` extraído fiel do que já está em produção
+  (`globals.css` + textos hardcoded nas seções); `WEDDING` é placeholder —
+  sem mockup de referência ainda, paleta/copy genéricas a revisar quando
+  existir o primeiro evento desse tema. **Sem wiring no app ainda** — a
+  tabela só passa a ser lida quando `events.theme_id` existir (fase 4); até
+  lá nenhum componente foi alterado.
+- [ ] **Fase 4 — `events` + `event_id`**: tabela `events`; `event_id`
+  nullable nas 5 tabelas; seed do evento do Davi; coluna `not null` só
+  depois do backfill.
+- [ ] **Fase 5 — Auth.js**: tabelas `users`/`accounts`/`sessions`; signup/
+  login de host.
+- [ ] **Fase 6 — Storage**: interface `MediaStorage` em
+  `src/infrastructure/storage/` + implementação S3-compatible.
+- [ ] **Fase 7 — Roteamento por slug + dashboard de host**:
+  `src/app/e/[slug]/page.tsx` público; `src/app/dashboard/` autenticado.
+- [ ] **Fase 8 — Cutover**: cadastro público aberto; `/internal/*` passa a
+  servir só a visão de operador.
+
+### Detalhe de cada fase
+
 1. **Trocar camada de dados**: instalar Drizzle + `pg`; modelar as 5 tabelas
    atuais no schema Drizzle; reescrever os repositórios em
    `src/infrastructure/postgres/` (substitui `src/infrastructure/supabase/`)
