@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { logoutHostAction } from '@/app/actions/auth.actions';
 import { BrandMark } from '@/components/brand-mark';
 import { CreateEventForm } from '@/components/forms/create-event-form';
+import { PlatformShell } from '@/components/platform-shell';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
@@ -32,36 +33,40 @@ export default async function DashboardPage() {
     const themes = await themeRepository.listAll();
 
     return (
-      <main className="flex flex-1 flex-col">
-        <BrandMark />
-        <SectionContainer title="Criar evento" subtitle="Escolha um tema e preencha os dados do seu evento.">
-          <CreateEventForm themes={themes} />
-        </SectionContainer>
-      </main>
+      <PlatformShell>
+        <main className="flex flex-1 flex-col">
+          <BrandMark />
+          <SectionContainer title="Criar evento" subtitle="Escolha um tema e preencha os dados do seu evento.">
+            <CreateEventForm themes={themes} />
+          </SectionContainer>
+        </main>
+      </PlatformShell>
     );
   }
 
   return (
-    <main className="flex flex-1 flex-col">
-      <BrandMark />
-      <SectionContainer title={event.honoreeName} subtitle={`Página pública: celebrare.me/e/${event.slug}`}>
-        <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-3">
-          {managementLinks.map((link) => (
-            <Link key={link.href} href={link.href}>
-              <Card className="h-full transition-shadow hover:shadow-card-hover">
-                <h3 className="font-display text-lg text-primary-700">{link.title}</h3>
-                <p className="mt-1 font-body text-sm text-ink-soft">{link.description}</p>
-              </Card>
-            </Link>
-          ))}
-        </div>
+    <PlatformShell>
+      <main className="flex flex-1 flex-col">
+        <BrandMark />
+        <SectionContainer title={event.honoreeName} subtitle={`Página pública: celebrare.me/e/${event.slug}`}>
+          <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-3">
+            {managementLinks.map((link) => (
+              <Link key={link.href} href={link.href}>
+                <Card className="h-full transition-shadow hover:shadow-card-hover">
+                  <h3 className="font-display text-lg text-primary-700">{link.title}</h3>
+                  <p className="mt-1 font-body text-sm text-ink-soft">{link.description}</p>
+                </Card>
+              </Link>
+            ))}
+          </div>
 
-        <form action={logoutHostAction} className="mt-8">
-          <Button type="submit" variant="ghost">
-            Sair
-          </Button>
-        </form>
-      </SectionContainer>
-    </main>
+          <form action={logoutHostAction} className="mt-8">
+            <Button type="submit" variant="ghost">
+              Sair
+            </Button>
+          </form>
+        </SectionContainer>
+      </main>
+    </PlatformShell>
   );
 }

@@ -1,59 +1,11 @@
-<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <clipPath id="boat-icon-left">
-      <rect x="0" y="0" width="256" height="512" />
-    </clipPath>
-    <clipPath id="boat-icon-right">
-      <rect x="256" y="0" width="256" height="512" />
-    </clipPath>
-    <clipPath id="boat-icon-hull">
-      <path d="M48,232 L464,232 L464,260 C464,332 392,390 256,390 C120,390 48,332 48,260 Z" />
-    </clipPath>
-  </defs>
-
-  <rect x="60" y="118" width="20" height="74" fill="#5C2C0D" />
-  <rect x="432" y="118" width="20" height="74" fill="#3D1D08" />
-
-  <path d="M128,64 L256,64 L256,176 L96,176 Z" fill="#FFC679" />
-  <path d="M256,64 L384,64 L416,176 L256,176 Z" fill="#E07B1F" />
-
-  <rect x="80" y="176" width="176" height="56" fill="#8B5A2B" />
-  <rect x="256" y="176" width="176" height="56" fill="#6B4423" />
-  <rect x="146" y="192" width="24" height="24" fill="#4A2C17" />
-  <rect x="190" y="192" width="24" height="24" fill="#4A2C17" />
-  <rect x="298" y="192" width="24" height="24" fill="#3A1F10" />
-  <rect x="342" y="192" width="24" height="24" fill="#3A1F10" />
-
-  <g clip-path="url(#boat-icon-hull)">
-    <rect x="0" y="232" width="256" height="48" fill="#C8956D" />
-    <rect x="256" y="232" width="256" height="48" fill="#A8743F" />
-    <rect x="0" y="280" width="256" height="48" fill="#7A3F12" />
-    <rect x="256" y="280" width="256" height="48" fill="#5C2E0D" />
-    <rect x="0" y="328" width="256" height="64" fill="#8B5A2B" />
-    <rect x="256" y="328" width="256" height="64" fill="#6B4423" />
-  </g>
-
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="22" fill="#C98A93" />
   <path
-    d="M16,400 Q32,388 48,400 T80,400 T112,400 T144,400 T176,400 T208,400 T240,400 T272,400 T304,400 T336,400 T368,400 T400,400 T432,400 T464,400 T496,400 L496,432 L16,432 Z"
-    fill="#8ECFF2"
-    clip-path="url(#boat-icon-left)"
-  />
-  <path
-    d="M16,400 Q32,388 48,400 T80,400 T112,400 T144,400 T176,400 T208,400 T240,400 T272,400 T304,400 T336,400 T368,400 T400,400 T432,400 T464,400 T496,400 L496,432 L16,432 Z"
-    fill="#5FB8EC"
-    clip-path="url(#boat-icon-right)"
-  />
-
-  <path
-    d="M16,420 Q32,434 48,420 T80,420 T112,420 T144,420 T176,420 T208,420 T240,420 T272,420 T304,420 T336,420 T368,420 T400,420 T432,420 T464,420 T496,420 L496,460 L16,460 Z"
-    fill="#29ABE2"
-  />
-
-  <path
-    d="M180,468 Q196,456 212,468 T244,468 T276,468 T308,468 T340,468"
-    stroke="#29ABE2"
-    stroke-width="14"
-    stroke-linecap="round"
+    d="M 68 34 A 24 24 0 1 0 68 66"
     fill="none"
+    stroke="#FFFFFF"
+    stroke-width="10"
+    stroke-linecap="round"
   />
+  <path d="M79 22 L81 28 L87 30 L81 32 L79 38 L77 32 L71 30 L77 28 Z" fill="#E5C07B" />
 </svg>

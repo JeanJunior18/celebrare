@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
-import { Caveat, Fraunces, Nunito } from 'next/font/google';
+import { Caveat, Fraunces, Nunito, Playfair_Display, Poppins } from 'next/font/google';
 
 import './globals.css';
 
+// Fontes dos temas de evento (BIRTHDAY/WEDDING) — não tocar; identidade da
+// Celebrare usa Playfair Display + Poppins, só no shell da plataforma
+// (ver PlatformShell).
 const fraunces = Fraunces({
   variable: '--font-display',
   subsets: ['latin'],
@@ -20,6 +23,23 @@ const nunito = Nunito({
   variable: '--font-body',
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
+});
+
+// Identidade da Celebrare (shell da plataforma: login/signup/dashboard) —
+// variáveis próprias pra não vazar pras páginas de evento, que mantêm a
+// tipografia do tema (PlatformShell remapeia --font-display/--font-body
+// pra essas duas dentro do seu escopo).
+const playfairDisplay = Playfair_Display({
+  variable: '--font-platform-display',
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  style: ['normal', 'italic'],
+});
+
+const poppins = Poppins({
+  variable: '--font-platform-body',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
 });
 
 const siteUrl = 'https://celebrare.me';
@@ -49,7 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${fraunces.variable} ${caveat.variable} ${nunito.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${caveat.variable} ${nunito.variable} ${playfairDisplay.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background font-body text-ink">{children}</body>
     </html>
