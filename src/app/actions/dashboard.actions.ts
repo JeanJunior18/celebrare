@@ -17,6 +17,7 @@ import { PostgresAdminGalleryRepository } from '@/infrastructure/postgres/admin-
 import { PostgresAdminGiftRepository } from '@/infrastructure/postgres/admin-gift-repository.postgres';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresEventRepository } from '@/infrastructure/postgres/event-repository.postgres';
+import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-repository.postgres';
 import { createMediaStorage } from '@/infrastructure/storage/s3-media-storage';
 
 async function requireHostUserId(): Promise<string> {
@@ -48,12 +49,12 @@ export async function createDashboardEventAction(
 ): Promise<CreateDashboardEventResult> {
   try {
     const ownerUserId = await requireHostUserId();
-    const repository = new PostgresEventRepository(db);
+    const eventRepository = new PostgresEventRepository(db);
+    const themeRepository = new PostgresThemeRepository(db);
 
-    const result = await createEvent(repository, {
+    await createEvent(eventRepository, themeRepository, {
       ownerUserId,
       themeId: String(formData.get('themeId') ?? ''),
-      slug: String(formData.get('slug') ?? ''),
       honoreeName: String(formData.get('honoreeName') ?? ''),
       subtitleLabel: String(formData.get('subtitleLabel') ?? ''),
       eventDate: String(formData.get('eventDate') ?? ''),
@@ -66,10 +67,6 @@ export async function createDashboardEventAction(
       pixKey: formData.get('pixKey')?.toString() || undefined,
       pixQrCodeUrl: formData.get('pixQrCodeUrl')?.toString() || undefined,
     });
-
-    if (!result.success) {
-      return { success: false, message: 'Esse link (slug) já está em uso — escolha outro.' };
-    }
 
     revalidatePath('/dashboard');
     return { success: true };

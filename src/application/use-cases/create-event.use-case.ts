@@ -2,16 +2,11 @@ import { z } from 'zod';
 
 import type { Event } from '@/domain/entities/event';
 import type { EventRepository } from '@/domain/repositories/event-repository';
+import type { ThemeRepository } from '@/domain/repositories/theme-repository';
 
 const createEventInputSchema = z.object({
   ownerUserId: z.string().uuid(),
   themeId: z.string().uuid(),
-  slug: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .min(3)
-    .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Use só letras minúsculas, números e hífen — ex: ana-e-pedro.'),
   honoreeName: z.string().min(2),
   subtitleLabel: z.string().min(1),
   eventDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida.'),
@@ -28,17 +23,52 @@ const createEventInputSchema = z.object({
 
 export type CreateEventInput = z.infer<typeof createEventInputSchema>;
 
-export type CreateEventResult = { success: true; event: Event } | { success: false; reason: 'SLUG_TAKEN' };
+// Sem acento, minúsculo, palavras separadas por hífen — ex: "Ana & Pedro" -> "ana-pedro".
+function slugify(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Colisão discreta: em vez de expor um sufixo aleatório, primeiro tenta o
+// nome do tema como desambiguador legível (ex: "ana-pedro-casamento") e só
+// recorre a um número incremental se até isso já existir.
+async function findAvailableSlug(
+  eventRepository: EventRepository,
+  base: string,
+  themeSlugHint: string,
+): Promise<string> {
+  if (!(await eventRepository.findBySlug(base))) return base;
+
+  const withTheme = `${base}-${themeSlugHint}`;
+  if (!(await eventRepository.findBySlug(withTheme))) return withTheme;
+
+  let suffix = 2;
+  let candidate = `${withTheme}-${suffix}`;
+  while (await eventRepository.findBySlug(candidate)) {
+    suffix += 1;
+    candidate = `${withTheme}-${suffix}`;
+  }
+  return candidate;
+}
 
 export async function createEvent(
   eventRepository: EventRepository,
+  themeRepository: ThemeRepository,
   input: CreateEventInput,
-): Promise<CreateEventResult> {
+): Promise<Event> {
   const parsed = createEventInputSchema.parse(input);
 
-  const existing = await eventRepository.findBySlug(parsed.slug);
-  if (existing) return { success: false, reason: 'SLUG_TAKEN' };
+  const theme = await themeRepository.findById(parsed.themeId);
+  if (!theme) throw new Error('Tema não encontrado.');
 
-  const event = await eventRepository.create(parsed);
-  return { success: true, event };
+  const base = slugify(parsed.honoreeName);
+  if (!base) throw new Error('Não foi possível gerar um link a partir do nome informado.');
+
+  const slug = await findAvailableSlug(eventRepository, base, slugify(theme.name));
+
+  return eventRepository.create({ ...parsed, slug });
 }

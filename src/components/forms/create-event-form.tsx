@@ -31,14 +31,6 @@ export function CreateEventForm({ themes }: CreateEventFormProps) {
           options={themes.map((theme) => ({ value: theme.id, label: theme.name }))}
         />
 
-        <Input
-          label="Link do evento (slug)"
-          name="slug"
-          placeholder="ex: ana-e-pedro"
-          required
-          minLength={3}
-        />
-
         <div className="flex flex-col gap-5 md:flex-row">
           <Input label="Nome do aniversariante/casal" name="honoreeName" required minLength={2} className="flex-1" />
           <Input
