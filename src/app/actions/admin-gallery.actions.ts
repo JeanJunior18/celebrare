@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 
 import { createGalleryPhoto } from '@/application/use-cases/create-gallery-photo.use-case';
 import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gallery-display-order.use-case';
-import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import { PostgresAdminGalleryRepository } from '@/infrastructure/postgres/admin-gallery-repository.postgres';
 import { db } from '@/infrastructure/postgres/client';
 import { getDaviEventId } from '@/infrastructure/postgres/davi-event-id';
@@ -29,7 +28,7 @@ export async function createGalleryPhotoAction(
 
     await createGalleryPhoto(repository, {
       eventId: await getDaviEventId(),
-      ageLabel: formData.get('ageLabel') as BabyAgeStage,
+      description: String(formData.get('description') ?? ''),
       displayOrder: Number(formData.get('displayOrder') ?? 0),
       image: formData.get('image') as File,
     });

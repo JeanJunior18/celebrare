@@ -106,6 +106,13 @@
       "when": 1782960201864,
       "tag": "0014_rename_diaper_pack_to_bulk_item",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1782961461183,
+      "tag": "0015_generalize_age_label_to_description",
+      "breakpoints": true
     }
   ]
 }

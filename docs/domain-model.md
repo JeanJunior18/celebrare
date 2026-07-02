@@ -70,7 +70,7 @@ RLS: insert liberado pra `anon`. Select liberado pra `anon` filtrado por
 | Campo | Tipo | Regra |
 |---|---|---|
 | id | uuid PK | |
-| age_label | enum `baby_age_stage` | NEWBORN \| THREE_MONTHS \| SIX_MONTHS \| NINE_MONTHS \| ONE_YEAR |
+| description | text | not null, legenda livre digitada pelo host (ex: "Recém-nascido", "Ensaio", "Recepção") |
 | image_url | text | not null |
 | display_order | int | not null |
 
@@ -130,8 +130,4 @@ RLS: select liberado pra `anon` apenas. Insert só pela rota privada
 ```ts
 enum GiftCategory { REGISTRY_ITEM = 'REGISTRY_ITEM', BULK_ITEM = 'BULK_ITEM' }
 enum GiftStatus { AVAILABLE = 'AVAILABLE', CLAIMED = 'CLAIMED', FULFILLED = 'FULFILLED' }
-enum BabyAgeStage {
-  NEWBORN = 'NEWBORN', THREE_MONTHS = 'THREE_MONTHS', SIX_MONTHS = 'SIX_MONTHS',
-  NINE_MONTHS = 'NINE_MONTHS', ONE_YEAR = 'ONE_YEAR',
-}
 ```

@@ -13,7 +13,7 @@ class FakeAdminGalleryRepository implements AdminGalleryRepository {
   ): Promise<GalleryPhoto> {
     return {
       id: 'photo-1',
-      ageLabel: input.ageLabel,
+      description: input.description,
       imageUrl: 'https://example.com/photo.jpg',
       displayOrder: input.displayOrder,
     };

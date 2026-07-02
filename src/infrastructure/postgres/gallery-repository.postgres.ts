@@ -2,14 +2,13 @@ import { asc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
-import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import type { GalleryRepository } from '@/domain/repositories/gallery-repository';
 
 import { galleryPhotos } from './schema';
 import type * as schema from './schema';
 
 function toGalleryPhoto(row: typeof galleryPhotos.$inferSelect): GalleryPhoto {
-  return { ...row, ageLabel: row.ageLabel as BabyAgeStage };
+  return row;
 }
 
 export class PostgresGalleryRepository implements GalleryRepository {

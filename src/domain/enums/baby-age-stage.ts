@@ -1,7 +1,0 @@
-export enum BabyAgeStage {
-  NEWBORN = 'NEWBORN',
-  THREE_MONTHS = 'THREE_MONTHS',
-  SIX_MONTHS = 'SIX_MONTHS',
-  NINE_MONTHS = 'NINE_MONTHS',
-  ONE_YEAR = 'ONE_YEAR',
-}

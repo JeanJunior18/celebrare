@@ -2,7 +2,6 @@ import { desc, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
-import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery-repository';
 import type { MediaStorage } from '@/infrastructure/storage/media-storage';
 import { imageExtension, uploadImageToMedia } from '@/infrastructure/storage/upload-image';
@@ -11,7 +10,7 @@ import { galleryPhotos } from './schema';
 import type * as schema from './schema';
 
 function toGalleryPhoto(row: typeof galleryPhotos.$inferSelect): GalleryPhoto {
-  return { ...row, ageLabel: row.ageLabel as BabyAgeStage };
+  return row;
 }
 
 export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
@@ -22,7 +21,7 @@ export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
 
   async createPhoto(input: {
     eventId: string;
-    ageLabel: BabyAgeStage;
+    description: string;
     displayOrder: number;
     image: File;
   }): Promise<GalleryPhoto> {
@@ -38,7 +37,7 @@ export class PostgresAdminGalleryRepository implements AdminGalleryRepository {
       .values({
         id,
         eventId: input.eventId,
-        ageLabel: input.ageLabel,
+        description: input.description,
         imageUrl,
         displayOrder: input.displayOrder,
       })

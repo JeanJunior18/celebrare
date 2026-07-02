@@ -75,10 +75,12 @@ viewport mobile primeiro, só depois adicione os breakpoints de desktop.
    `category` (`REGISTRY_ITEM` / `BULK_ITEM`); "Pix Presente" é conteúdo
    estático de `config/event.config.ts` (não é um gift_item — regra de
    negócio #3 do domain model).
-6. **GallerySection** — heading + carousel horizontal de fotos com label de
-   idade abaixo de cada uma, com swipe/scroll nativo no mobile. Os 5 labels
-   do mockup (RECÉM-NASCIDO, 3 MESES, 6 MESES, 9 MESES, 1 ANO) correspondem
-   exatamente ao enum `BabyAgeStage`.
+6. **GallerySection** — heading + carousel horizontal de fotos com legenda
+   abaixo de cada uma, com swipe/scroll nativo no mobile. A legenda é um
+   texto livre digitado pelo host (campo `description`), não mais um enum
+   fixo de fases do bebê — o mockup original mostrava RECÉM-NASCIDO,
+   3 MESES, 6 MESES, 9 MESES, 1 ANO, mas isso é só um exemplo de conteúdo,
+   não uma lista fixa de opções.
 7. **GuestbookSection** — heading + subtítulo + botão "Deixar mensagem"
    (abre form/modal pra escrever no mural).
 8. **Footer** — ilustração pequena da arca + citação bíblica (Gênesis 7:9)

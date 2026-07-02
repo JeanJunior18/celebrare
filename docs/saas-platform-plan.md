@@ -98,8 +98,8 @@ whatsapp, overshoot de item em quantidade):
 - `gift_claims` (+ `event_id`)
 - `guestbook_messages` (+ `event_id`)
 - `gallery_photos` (+ `event_id`; campo `age_label` (enum `baby_age_stage`)
-  generalizado para `timeline_label text` livre — o enum fixo de estágios de
-  bebê não serve pra casamento)
+  generalizado para `description text` livre — concluído; o enum fixo de
+  estágios de bebê não servia pra casamento)
 
 ## C. Histórias de usuário
 

@@ -10,7 +10,6 @@ import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gal
 import { updateEventHero } from '@/application/use-cases/update-event-hero.use-case';
 import { updateEventSection } from '@/application/use-cases/update-event-section.use-case';
 import type { Event, SectionKey } from '@/domain/entities/event';
-import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import type { GiftCategory } from '@/domain/enums/gift-category';
 import { auth } from '@/infrastructure/auth/auth';
 import type { AdminGalleryActionResult } from '@/app/actions/admin-gallery.actions';
@@ -129,7 +128,7 @@ export async function createDashboardGalleryPhotoAction(
 
     await createGalleryPhoto(repository, {
       eventId,
-      ageLabel: formData.get('ageLabel') as BabyAgeStage,
+      description: String(formData.get('description') ?? ''),
       displayOrder: Number(formData.get('displayOrder') ?? 0),
       image: formData.get('image') as File,
     });

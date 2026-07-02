@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
-import { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery-repository';
 
 import { createGalleryPhoto } from './create-gallery-photo.use-case';
@@ -17,7 +16,7 @@ class FakeAdminGalleryRepository implements AdminGalleryRepository {
     this.created.push(input);
     return {
       id: 'photo-1',
-      ageLabel: input.ageLabel,
+      description: input.description,
       imageUrl: 'https://example.com/photo.jpg',
       displayOrder: input.displayOrder,
     };
@@ -38,12 +37,12 @@ describe('createGalleryPhoto', () => {
 
     const result = await createGalleryPhoto(repository, {
       eventId: VALID_UUID,
-      ageLabel: BabyAgeStage.SIX_MONTHS,
+      description: '6 meses',
       displayOrder: 2,
       image: fakeImage(),
     });
 
-    expect(result.ageLabel).toBe(BabyAgeStage.SIX_MONTHS);
+    expect(result.description).toBe('6 meses');
     expect(repository.created).toHaveLength(1);
   });
 
@@ -53,8 +52,21 @@ describe('createGalleryPhoto', () => {
     await expect(
       createGalleryPhoto(repository, {
         eventId: VALID_UUID,
-        ageLabel: BabyAgeStage.NEWBORN,
+        description: 'Recém-nascido',
         displayOrder: -1,
+        image: fakeImage(),
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('rejeita descrição vazia', async () => {
+    const repository = new FakeAdminGalleryRepository();
+
+    await expect(
+      createGalleryPhoto(repository, {
+        eventId: VALID_UUID,
+        description: '',
+        displayOrder: 0,
         image: fakeImage(),
       }),
     ).rejects.toThrow();

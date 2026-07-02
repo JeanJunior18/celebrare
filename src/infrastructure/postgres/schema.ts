@@ -8,13 +8,6 @@ const createdAtColumn = () =>
 
 export const giftCategoryEnum = pgEnum('gift_category', ['REGISTRY_ITEM', 'BULK_ITEM']);
 export const giftStatusEnum = pgEnum('gift_status', ['AVAILABLE', 'CLAIMED', 'FULFILLED']);
-export const babyAgeStageEnum = pgEnum('baby_age_stage', [
-  'NEWBORN',
-  'THREE_MONTHS',
-  'SIX_MONTHS',
-  'NINE_MONTHS',
-  'ONE_YEAR',
-]);
 
 export const rsvps = pgTable('rsvps', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -67,7 +60,7 @@ export const guestbookMessages = pgTable('guestbook_messages', {
 export const galleryPhotos = pgTable('gallery_photos', {
   id: uuid('id').primaryKey().defaultRandom(),
   eventId: uuid('event_id').notNull().references(() => events.id),
-  ageLabel: babyAgeStageEnum('age_label').notNull(),
+  description: text('description').notNull(),
   imageUrl: text('image_url').notNull(),
   displayOrder: integer('display_order').notNull(),
 });

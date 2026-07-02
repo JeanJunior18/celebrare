@@ -4,19 +4,10 @@ import Image from 'next/image';
 import { useRef } from 'react';
 
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
-import { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 
 export interface GalleryCarouselProps {
   photos: GalleryPhoto[];
 }
-
-const ageStageLabel: Record<BabyAgeStage, string> = {
-  [BabyAgeStage.NEWBORN]: 'Recém-nascido',
-  [BabyAgeStage.THREE_MONTHS]: '3 meses',
-  [BabyAgeStage.SIX_MONTHS]: '6 meses',
-  [BabyAgeStage.NINE_MONTHS]: '9 meses',
-  [BabyAgeStage.ONE_YEAR]: '1 ano',
-};
 
 export function GalleryCarousel({ photos }: GalleryCarouselProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -39,14 +30,14 @@ export function GalleryCarousel({ photos }: GalleryCarouselProps) {
             <div className="relative h-44 w-44 overflow-hidden rounded-2xl border border-primary-100/60 shadow-card md:h-52 md:w-52">
               <Image
                 src={photo.imageUrl}
-                alt={`Davi — ${ageStageLabel[photo.ageLabel]}`}
+                alt={photo.description}
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 13rem, 11rem"
               />
             </div>
             <figcaption className="font-body text-xs font-semibold uppercase tracking-wide text-primary-700">
-              {ageStageLabel[photo.ageLabel]}
+              {photo.description}
             </figcaption>
           </figure>
         ))}
