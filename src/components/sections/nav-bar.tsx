@@ -3,15 +3,30 @@
 import { useState } from 'react';
 
 import { BoatIcon } from '@/components/ui/BoatIcon';
-import type { Event } from '@/domain/entities/event';
+import type { Event, SectionKey } from '@/domain/entities/event';
 
 export interface NavBarProps {
   event: Event;
 }
 
+// Âncoras que dependem de um bloco que o host pode ocultar — ver
+// components/sections/*.tsx pros `id` de cada seção e event-page.tsx pro
+// gate de visibilidade. Hero não entra aqui (nunca é ocultável).
+const ANCHOR_TO_SECTION: Partial<Record<string, SectionKey>> = {
+  '#presenca': 'rsvp',
+  '#presentes': 'giftRegistry',
+  '#como-chegar': 'location',
+  '#galeria': 'gallery',
+  '#mensagens': 'guestbook',
+};
+
 export function NavBar({ event }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { brand, links: navLinks } = event.theme.defaultCopy.nav;
+  const { brand, links: allNavLinks } = event.theme.defaultCopy.nav;
+  const navLinks = allNavLinks.filter((link) => {
+    const section = ANCHOR_TO_SECTION[link.href];
+    return !section || event.sectionVisibility[section];
+  });
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-primary-100/60 bg-background/90 backdrop-blur">

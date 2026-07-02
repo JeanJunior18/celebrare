@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import { Badge } from '@/components/ui/Badge';
 import { HeartDivider } from '@/components/ui/SectionContainer';
-import type { Event } from '@/domain/entities/event';
+import { resolveEventCopy, type Event } from '@/domain/entities/event';
 
 export interface HeroSectionProps {
   event: Event;
 }
 
 export function HeroSection({ event }: HeroSectionProps) {
-  const { eyebrow, intro, titlePrefix, tagline } = event.theme.defaultCopy.hero;
+  const { eyebrow, intro, titlePrefix, tagline } = resolveEventCopy(event).hero;
   const imageUrl = event.heroImageUrl ?? event.theme.defaultIllustrationUrl;
 
   return (

@@ -5,7 +5,7 @@ import { CopyPixKey } from '@/components/gift/copy-pix-key';
 import { GiftGallery } from '@/components/gift/gift-gallery';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
-import type { Event } from '@/domain/entities/event';
+import { resolveEventCopy, type Event } from '@/domain/entities/event';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresGiftRepository } from '@/infrastructure/postgres/gift-repository.postgres';
 
@@ -17,7 +17,7 @@ export async function GiftRegistrySection({ event }: GiftRegistrySectionProps) {
   const repository = new PostgresGiftRepository(db);
   const { registryItems, diaperPacks } = await listGiftItems(repository, event.id);
   const allItems = [...registryItems, ...diaperPacks];
-  const { title, subtitle, description, pixCardTitle, pixCardSubtitle } = event.theme.defaultCopy.giftRegistry;
+  const { title, subtitle, description, pixCardTitle, pixCardSubtitle } = resolveEventCopy(event).giftRegistry;
 
   return (
     <SectionContainer id="presentes" title={title} subtitle={subtitle}>

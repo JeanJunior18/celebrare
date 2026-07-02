@@ -16,6 +16,7 @@ import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-reposit
 export const dynamic = 'force-dynamic';
 
 const managementLinks = [
+  { href: '/dashboard/edit', title: 'Editar página', description: 'Textos, foto do hero e blocos visíveis.' },
   { href: '/dashboard/gifts', title: 'Presentes', description: 'Adicionar item na lista de presentes.' },
   { href: '/dashboard/gallery', title: 'Fotos', description: 'Adicionar foto na galeria do evento.' },
   { href: '/dashboard/rsvps', title: 'Confirmações', description: 'Ver quem confirmou presença.' },
@@ -49,7 +50,7 @@ export default async function DashboardPage() {
       <main className="flex flex-1 flex-col">
         <BrandMark />
         <SectionContainer title={event.honoreeName} subtitle={`Página pública: celebrare.me/e/${event.slug}`}>
-          <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-3">
+          <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {managementLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <Card className="h-full transition-shadow hover:shadow-card-hover">

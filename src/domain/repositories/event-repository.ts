@@ -1,4 +1,4 @@
-import type { Event } from '@/domain/entities/event';
+import type { Event, EventCopyOverrides, SectionVisibility } from '@/domain/entities/event';
 
 export interface CreateEventInput {
   ownerUserId: string;
@@ -18,7 +18,16 @@ export interface CreateEventInput {
   pixQrCodeUrl?: string;
 }
 
-export type UpdateEventInput = Partial<Omit<CreateEventInput, 'ownerUserId'>>;
+export type UpdateEventInput = Partial<Omit<CreateEventInput, 'ownerUserId'>> & {
+  sectionVisibility?: SectionVisibility;
+  copyOverrides?: EventCopyOverrides;
+};
+
+export interface UpdateEventHeroInput {
+  image?: File;
+  imageUrl?: string;
+  heroIntro?: string;
+}
 
 export interface EventRepository {
   findBySlug(slug: string): Promise<Event | null>;
@@ -27,4 +36,5 @@ export interface EventRepository {
   listAll(): Promise<Event[]>;
   create(input: CreateEventInput): Promise<Event>;
   update(eventId: string, input: UpdateEventInput): Promise<Event>;
+  updateHero(eventId: string, input: UpdateEventHeroInput): Promise<Event>;
 }

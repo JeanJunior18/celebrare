@@ -1,0 +1,2 @@
+ALTER TABLE "events" ADD COLUMN "section_visibility" jsonb DEFAULT '{"rsvp":true,"giftRegistry":true,"location":true,"gallery":true,"guestbook":true}'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "events" ADD COLUMN "copy_overrides" jsonb DEFAULT '{}'::jsonb NOT NULL;

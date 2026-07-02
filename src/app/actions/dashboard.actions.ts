@@ -7,6 +7,9 @@ import { createEvent } from '@/application/use-cases/create-event.use-case';
 import { createGalleryPhoto } from '@/application/use-cases/create-gallery-photo.use-case';
 import { createGiftItem } from '@/application/use-cases/create-gift-item.use-case';
 import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gallery-display-order.use-case';
+import { updateEventHero } from '@/application/use-cases/update-event-hero.use-case';
+import { updateEventSection } from '@/application/use-cases/update-event-section.use-case';
+import type { Event, SectionKey } from '@/domain/entities/event';
 import type { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import type { GiftCategory } from '@/domain/enums/gift-category';
 import { auth } from '@/infrastructure/auth/auth';
@@ -24,12 +27,16 @@ async function requireHostUserId(): Promise<string> {
   return session.user.id;
 }
 
-async function requireHostEventId(): Promise<string> {
+async function requireHostEvent(): Promise<Event> {
   const ownerUserId = await requireHostUserId();
   const repository = new PostgresEventRepository(db);
   const event = await repository.findByOwnerUserId(ownerUserId);
   if (!event) throw new Error('Você ainda não tem um evento criado.');
-  return event.id;
+  return event;
+}
+
+async function requireHostEventId(): Promise<string> {
+  return (await requireHostEvent()).id;
 }
 
 export interface CreateDashboardEventResult {
@@ -128,6 +135,65 @@ export async function createDashboardGalleryPhotoAction(
     });
 
     revalidatePath('/dashboard/gallery');
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface UpdateDashboardEventSectionResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function updateDashboardEventSectionAction(
+  _prevState: UpdateDashboardEventSectionResult | null,
+  formData: FormData,
+): Promise<UpdateDashboardEventSectionResult> {
+  try {
+    const event = await requireHostEvent();
+    const repository = new PostgresEventRepository(db);
+
+    await updateEventSection(repository, event, {
+      section: formData.get('section') as SectionKey,
+      visible: formData.get('visible') === 'on',
+      copy: {
+        title: formData.get('title')?.toString() ?? '',
+        subtitle: formData.get('subtitle')?.toString() ?? '',
+        description: formData.get('description')?.toString() ?? '',
+      },
+    });
+
+    revalidatePath('/dashboard/edit');
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface UpdateDashboardEventHeroResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function updateDashboardEventHeroAction(
+  _prevState: UpdateDashboardEventHeroResult | null,
+  formData: FormData,
+): Promise<UpdateDashboardEventHeroResult> {
+  try {
+    const event = await requireHostEvent();
+    const repository = new PostgresEventRepository(db, createMediaStorage());
+
+    const imageField = formData.get('image');
+    const image = imageField instanceof File && imageField.size > 0 ? imageField : undefined;
+
+    await updateEventHero(repository, event, {
+      image,
+      imageUrl: formData.get('imageUrl')?.toString() || undefined,
+      heroIntro: formData.get('heroIntro')?.toString() || undefined,
+    });
+
+    revalidatePath('/dashboard/edit');
     return { success: true };
   } catch (error) {
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };

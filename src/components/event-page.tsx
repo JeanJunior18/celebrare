@@ -23,11 +23,11 @@ export function EventPage({ event }: EventPageProps) {
       <NavBar event={event} />
       <main className="flex flex-1 flex-col">
         <HeroSection event={event} />
-        <InfoCardsSection event={event} />
-        <RsvpSection event={event} />
-        <GiftRegistrySection event={event} />
-        <GallerySection event={event} />
-        <GuestbookSection event={event} />
+        {event.sectionVisibility.location && <InfoCardsSection event={event} />}
+        {event.sectionVisibility.rsvp && <RsvpSection event={event} />}
+        {event.sectionVisibility.giftRegistry && <GiftRegistrySection event={event} />}
+        {event.sectionVisibility.gallery && <GallerySection event={event} />}
+        {event.sectionVisibility.guestbook && <GuestbookSection event={event} />}
         <FooterSection event={event} />
       </main>
     </>

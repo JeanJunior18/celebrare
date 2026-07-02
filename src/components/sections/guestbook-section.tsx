@@ -2,7 +2,7 @@ import { listGuestbookMessages } from '@/application/use-cases/list-guestbook-me
 import { GuestbookForm } from '@/components/forms/guestbook-form';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
-import type { Event } from '@/domain/entities/event';
+import { resolveEventCopy, type Event } from '@/domain/entities/event';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresGuestbookRepository } from '@/infrastructure/postgres/guestbook-repository.postgres';
 
@@ -13,7 +13,7 @@ export interface GuestbookSectionProps {
 export async function GuestbookSection({ event }: GuestbookSectionProps) {
   const repository = new PostgresGuestbookRepository(db);
   const messages = await listGuestbookMessages(repository, event.id);
-  const { title, subtitle } = event.theme.defaultCopy.guestbook;
+  const { title, subtitle } = resolveEventCopy(event).guestbook;
 
   return (
     <SectionContainer id="mensagens" title={title} subtitle={subtitle}>

@@ -24,6 +24,8 @@ function buildEvent(overrides: Partial<Event> = {}): Event {
     quoteReference: null,
     pixKey: null,
     pixQrCodeUrl: null,
+    sectionVisibility: { rsvp: true, giftRegistry: true, location: true, gallery: true, guestbook: true },
+    copyOverrides: {},
     theme: {
       id: VALID_UUID,
       slug: 'WEDDING',
@@ -59,6 +61,10 @@ class FakeEventRepository implements EventRepository {
   }
 
   async update(): Promise<Event> {
+    throw new Error('not implemented');
+  }
+
+  async updateHero(): Promise<Event> {
     throw new Error('not implemented');
   }
 }

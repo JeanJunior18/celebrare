@@ -111,6 +111,19 @@ export const events = pgTable('events', {
   quoteReference: text('quote_reference'),
   pixKey: text('pix_key'),
   pixQrCodeUrl: text('pix_qr_code_url'),
+  // Quais blocos da página pública o host escolheu mostrar (hero nunca
+  // entra aqui — não pode ser omitido). Ver domain/entities/event.ts.
+  sectionVisibility: jsonb('section_visibility').notNull().default({
+    rsvp: true,
+    giftRegistry: true,
+    location: true,
+    gallery: true,
+    guestbook: true,
+  }),
+  // Override por evento de um subconjunto restrito de theme.defaultCopy —
+  // o resto do copy do tema continua compartilhado por todos os eventos
+  // daquele tema (ver domain/entities/event.ts, resolveEventCopy).
+  copyOverrides: jsonb('copy_overrides').notNull().default({}),
   createdAt: createdAtColumn(),
 });
 
