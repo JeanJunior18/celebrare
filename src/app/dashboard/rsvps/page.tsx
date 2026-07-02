@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { listRsvps } from '@/application/use-cases/list-rsvps.use-case';
+import { DashboardBackLink } from '@/components/dashboard-back-link';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
 import { auth } from '@/infrastructure/auth/auth';
@@ -23,6 +24,7 @@ export default async function DashboardRsvpsPage() {
 
   return (
     <main className="flex flex-1 flex-col">
+      <DashboardBackLink />
       <SectionContainer
         title="Confirmações de presença"
         subtitle={`${totalConfirmed} pessoa(s) confirmada(s) (convidados + acompanhantes).`}

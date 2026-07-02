@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { createDashboardGalleryPhotoAction, getDashboardNextDisplayOrderAction } from '@/app/actions/dashboard.actions';
 import { AdminPhotoForm } from '@/components/forms/admin-photo-form';
+import { DashboardBackLink } from '@/components/dashboard-back-link';
 import { SectionContainer } from '@/components/ui/SectionContainer';
 import { auth } from '@/infrastructure/auth/auth';
 
@@ -13,6 +14,7 @@ export default async function DashboardGalleryPage() {
 
   return (
     <main className="flex flex-1 flex-col">
+      <DashboardBackLink />
       <SectionContainer title="Adicionar foto" subtitle="Cadastra uma nova foto na galeria do seu evento.">
         <AdminPhotoForm
           createPhotoAction={createDashboardGalleryPhotoAction}
