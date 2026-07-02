@@ -10,10 +10,6 @@ import { Input } from '@/components/ui/Input';
 export function LoginForm() {
   const [state, formAction, isPending] = useActionState(loginHostAction, null);
 
-  if (state?.success) {
-    return <p className="font-body text-primary-700">Login realizado! 💚</p>;
-  }
-
   return (
     <Card whimsyAccent className="w-full max-w-md">
       <form action={formAction} className="flex flex-col gap-5">

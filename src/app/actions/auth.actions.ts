@@ -1,6 +1,7 @@
 'use server';
 
 import { AuthError } from 'next-auth';
+import { redirect } from 'next/navigation';
 import { ZodError } from 'zod';
 
 import { registerHost } from '@/application/use-cases/register-host.use-case';
@@ -52,14 +53,14 @@ export async function loginHostAction(
       password: String(formData.get('password') ?? ''),
       redirect: false,
     });
-
-    return { success: true };
   } catch (error) {
     if (error instanceof AuthError) {
       return { success: false, message: 'Email ou senha inválidos.' };
     }
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
   }
+
+  redirect('/dashboard');
 }
 
 export async function logoutHostAction(): Promise<void> {

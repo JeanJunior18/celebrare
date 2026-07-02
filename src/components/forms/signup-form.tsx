@@ -10,10 +10,6 @@ import { Input } from '@/components/ui/Input';
 export function SignupForm() {
   const [state, formAction, isPending] = useActionState(registerHostAction, null);
 
-  if (state?.success) {
-    return <p className="font-body text-primary-700">Conta criada! Login realizado. 💚</p>;
-  }
-
   return (
     <Card whimsyAccent className="w-full max-w-md">
       <form action={formAction} className="flex flex-col gap-5">
