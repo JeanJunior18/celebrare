@@ -13,9 +13,9 @@ export interface EventPageProps {
   event: Event;
 }
 
-// Composição compartilhada por `app/page.tsx` (evento do Davi, slug fixo) e
-// `app/e/[slug]/page.tsx` (qualquer evento) — mesmo conteúdo, parametrizado
-// por `event` em vez do antigo `eventConfig` hardcoded (docs/saas-platform-plan.md, fase 7).
+// Composição usada por `app/e/[slug]/page.tsx` pra renderizar qualquer
+// evento — conteúdo todo parametrizado por `event` em vez do antigo
+// `eventConfig` hardcoded (docs/saas-platform-plan.md, fase 7).
 export function EventPage({ event }: EventPageProps) {
   return (
     <>

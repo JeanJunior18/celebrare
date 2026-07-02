@@ -1,44 +1,10 @@
 'use server';
 
-import { createGiftItem } from '@/application/use-cases/create-gift-item.use-case';
-import type { GiftCategory } from '@/domain/enums/gift-category';
 import { fetchOpenGraphMetadata } from '@/infrastructure/http/open-graph-metadata';
-import { PostgresAdminGiftRepository } from '@/infrastructure/postgres/admin-gift-repository.postgres';
-import { db } from '@/infrastructure/postgres/client';
-import { getDaviEventId } from '@/infrastructure/postgres/davi-event-id';
-import { createMediaStorage } from '@/infrastructure/storage/s3-media-storage';
 
 export interface AdminGiftActionResult {
   success: boolean;
   message?: string;
-}
-
-export async function createGiftItemAction(
-  _prevState: AdminGiftActionResult | null,
-  formData: FormData,
-): Promise<AdminGiftActionResult> {
-  try {
-    const repository = new PostgresAdminGiftRepository(db, createMediaStorage());
-
-    const imageField = formData.get('image');
-    const image = imageField instanceof File && imageField.size > 0 ? imageField : undefined;
-
-    await createGiftItem(repository, {
-      eventId: await getDaviEventId(),
-      name: String(formData.get('name') ?? ''),
-      description: formData.get('description')?.toString() || undefined,
-      category: formData.get('category') as GiftCategory,
-      sizeLabel: formData.get('sizeLabel')?.toString() || undefined,
-      quantityNeeded: Number(formData.get('quantityNeeded') ?? 1),
-      purchaseUrl: formData.get('purchaseUrl')?.toString() || undefined,
-      image,
-      imageUrl: formData.get('imageUrl')?.toString() || undefined,
-    });
-
-    return { success: true };
-  } catch (error) {
-    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
-  }
 }
 
 export interface GiftLinkMetadataResult {

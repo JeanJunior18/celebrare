@@ -17,7 +17,7 @@ export async function GuestbookSection({ event }: GuestbookSectionProps) {
 
   return (
     <SectionContainer id="mensagens" title={title} subtitle={subtitle}>
-      <GuestbookForm eventId={event.id} />
+      <GuestbookForm eventId={event.id} honoreeName={event.honoreeName} />
 
       {messages.length > 0 && (
         <div className="mt-10 grid w-full gap-4 md:grid-cols-2">

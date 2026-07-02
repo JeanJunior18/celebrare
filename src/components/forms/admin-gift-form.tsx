@@ -2,11 +2,7 @@
 
 import { useActionState, useState, useTransition } from 'react';
 
-import {
-  createGiftItemAction,
-  fetchGiftLinkMetadataAction,
-  type AdminGiftActionResult,
-} from '@/app/actions/admin-gift.actions';
+import { fetchGiftLinkMetadataAction, type AdminGiftActionResult } from '@/app/actions/admin-gift.actions';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -22,13 +18,13 @@ const categoryOptions = [
 const emptyValues = { name: '', description: '', purchaseUrl: '', imageUrl: undefined as string | undefined };
 
 export interface AdminGiftFormProps {
-  // Permite reaproveitar o form no dashboard de host (fase 7) com uma action
-  // que resolve o eventId da sessão, em vez de sempre administrar o evento
-  // do Davi (`createGiftItemAction`, o default usado por `/internal/gifts`).
-  action?: (state: AdminGiftActionResult | null, formData: FormData) => Promise<AdminGiftActionResult>;
+  // Action resolve o eventId da sessão do host — só há um consumidor hoje
+  // (`/dashboard/gifts`), mas fica como prop pra manter o form sem
+  // acoplamento a um evento específico.
+  action: (state: AdminGiftActionResult | null, formData: FormData) => Promise<AdminGiftActionResult>;
 }
 
-export function AdminGiftForm({ action = createGiftItemAction }: AdminGiftFormProps) {
+export function AdminGiftForm({ action }: AdminGiftFormProps) {
   const [state, formAction, isPending] = useActionState(action, null);
   const [formKey, setFormKey] = useState(0);
   const [prevState, setPrevState] = useState(state);

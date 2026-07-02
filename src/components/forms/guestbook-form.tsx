@@ -9,9 +9,10 @@ import { Textarea } from '@/components/ui/Textarea';
 
 export interface GuestbookFormProps {
   eventId: string;
+  honoreeName: string;
 }
 
-export function GuestbookForm({ eventId }: GuestbookFormProps) {
+export function GuestbookForm({ eventId, honoreeName }: GuestbookFormProps) {
   const [state, formAction, isPending] = useActionState(leaveMessageAction, null);
 
   if (state?.success) {
@@ -25,7 +26,7 @@ export function GuestbookForm({ eventId }: GuestbookFormProps) {
       <Textarea
         label="Mensagem"
         name="message"
-        placeholder="Deixe uma mensagem cheia de carinho para o Davi"
+        placeholder={`Deixe uma mensagem cheia de carinho para ${honoreeName}`}
         required
         maxLength={500}
         rows={4}

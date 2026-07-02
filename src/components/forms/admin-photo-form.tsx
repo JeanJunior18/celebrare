@@ -2,11 +2,7 @@
 
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
 
-import {
-  createGalleryPhotoAction,
-  getNextGalleryDisplayOrderAction,
-  type AdminGalleryActionResult,
-} from '@/app/actions/admin-gallery.actions';
+import type { AdminGalleryActionResult } from '@/app/actions/dashboard.actions';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -23,19 +19,16 @@ interface SubmitResult {
 }
 
 export interface AdminPhotoFormProps {
-  // Mesmo motivo do `action` em AdminGiftForm — reaproveitado pelo
-  // dashboard de host (fase 7) com actions que resolvem o eventId da sessão.
-  createPhotoAction?: (
+  // Mesmo motivo do `action` em AdminGiftForm — actions resolvem o eventId
+  // da sessão do host.
+  createPhotoAction: (
     state: AdminGalleryActionResult | null,
     formData: FormData,
   ) => Promise<AdminGalleryActionResult>;
-  getNextDisplayOrder?: () => Promise<number>;
+  getNextDisplayOrder: () => Promise<number>;
 }
 
-export function AdminPhotoForm({
-  createPhotoAction = createGalleryPhotoAction,
-  getNextDisplayOrder = getNextGalleryDisplayOrderAction,
-}: AdminPhotoFormProps) {
+export function AdminPhotoForm({ createPhotoAction, getNextDisplayOrder }: AdminPhotoFormProps) {
   const [photos, setPhotos] = useState<SelectedPhoto[]>([]);
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);

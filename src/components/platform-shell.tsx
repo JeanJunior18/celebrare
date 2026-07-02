@@ -2,11 +2,11 @@ import type { CSSProperties, ReactNode } from 'react';
 
 // Identidade visual da Celebrare (logo + paleta + tipografia, recebida do
 // usuário em 2026-06-25) — escopo deliberadamente limitado ao shell da
-// plataforma (login, signup, dashboard): só sobrescreve as custom
+// plataforma (`/`, login, signup, dashboard): só sobrescreve as custom
 // properties de globals.css dentro do próprio wrapper, então `Card`,
 // `Button`, `Input` etc. ficam "Celebrare" aqui sem precisar de nenhuma
-// mudança neles. Páginas de evento (`/`, `/e/[slug]`) não usam isso —
-// continuam só com o tema (`themes.color_tokens`) do próprio evento.
+// mudança neles. Página de evento (`/e/[slug]`) não usa isso — continua só
+// com o tema (`themes.color_tokens`) do próprio evento.
 //
 // `secondary-*` não é sobrescrita de propósito: é usada em todo o app como
 // cor de erro/validação (`text-secondary-700`, `border-secondary-500`), não

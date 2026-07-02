@@ -12,7 +12,6 @@ import { updateEventSection } from '@/application/use-cases/update-event-section
 import type { Event, SectionKey } from '@/domain/entities/event';
 import type { GiftCategory } from '@/domain/enums/gift-category';
 import { auth } from '@/infrastructure/auth/auth';
-import type { AdminGalleryActionResult } from '@/app/actions/admin-gallery.actions';
 import type { AdminGiftActionResult } from '@/app/actions/admin-gift.actions';
 import { PostgresAdminGalleryRepository } from '@/infrastructure/postgres/admin-gallery-repository.postgres';
 import { PostgresAdminGiftRepository } from '@/infrastructure/postgres/admin-gift-repository.postgres';
@@ -110,6 +109,11 @@ export async function createDashboardGiftItemAction(
   } catch (error) {
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
   }
+}
+
+export interface AdminGalleryActionResult {
+  success: boolean;
+  message?: string;
 }
 
 export async function getDashboardNextDisplayOrderAction(): Promise<number> {

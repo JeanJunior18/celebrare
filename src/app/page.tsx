@@ -1,29 +1,30 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import Link from 'next/link';
 
-import { buildEventMetadata } from '@/components/event-metadata';
-import { EventPage } from '@/components/event-page';
-import { getEventBySlug } from '@/infrastructure/postgres/get-event-by-slug';
+import { BrandMark } from '@/components/brand-mark';
+import { PlatformShell } from '@/components/platform-shell';
+import { SectionContainer } from '@/components/ui/SectionContainer';
 
-// gift_items, rsvps e guestbook_messages precisam de dado fresco por
-// request (CLAUDE.md) — sem isso o Next prerenderiza "/" como página
-// estática e a Vercel serve o HTML do build pra todo mundo.
-export const dynamic = 'force-dynamic';
-
-// Slug fixo do evento do Davi (scripts/seed-davi-event.mjs) — a raiz "/"
-// continua sendo o link já compartilhado no WhatsApp; `/e/[slug]` (fase 7)
-// é o caminho genérico pra qualquer evento novo.
-const DAVI_EVENT_SLUG = 'arca-do-davi';
-
-export async function generateMetadata(): Promise<Metadata> {
-  const event = await getEventBySlug(DAVI_EVENT_SLUG);
-  return event ? buildEventMetadata(event) : {};
-}
-
-export default async function Home() {
-  const event = await getEventBySlug(DAVI_EVENT_SLUG);
-
-  if (!event) notFound();
-
-  return <EventPage event={event} />;
+// Placeholder até a landing page de verdade ser construída — a raiz
+// deixou de servir um evento fixo (docs/saas-platform-plan.md). Sem
+// leitura de banco, então pode ser estática; metadata vem do fallback
+// genérico em app/layout.tsx.
+export default function Home() {
+  return (
+    <PlatformShell>
+      <main className="flex flex-1 flex-col">
+        <BrandMark />
+        <SectionContainer
+          title="Celebrare"
+          subtitle="Sua página de convite e confirmação de presença, em breve por aqui."
+        >
+          <p className="font-body text-sm text-ink-soft">
+            Já tem uma conta?{' '}
+            <Link href="/login" className="font-semibold text-primary-700 underline">
+              Entrar
+            </Link>
+          </p>
+        </SectionContainer>
+      </main>
+    </PlatformShell>
+  );
 }
