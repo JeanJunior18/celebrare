@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Caveat, Fraunces, Nunito, Playfair_Display, Poppins } from 'next/font/google';
 
+import { getSiteUrl } from '@/infrastructure/site-url';
+
 import './globals.css';
 
 // Fontes dos temas de evento (BIRTHDAY/WEDDING) — não tocar; identidade da
@@ -42,13 +44,11 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
 });
 
-const siteUrl = 'https://celebrare.me';
-
 // Fallback genérico — `/` e `/e/[slug]` sobrescrevem via `generateMetadata`
 // depois de buscar o evento (docs/saas-platform-plan.md, fase 7). Páginas
 // sem evento (`/login`, `/signup`, `/internal/*`) usam esse default.
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(getSiteUrl()),
   title: 'Celebrare — convites e confirmação de presença',
   description: 'Crie e gerencie o convite e a confirmação de presença do seu evento na Celebrare.',
   openGraph: {
