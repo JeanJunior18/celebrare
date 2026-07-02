@@ -13,7 +13,7 @@ export interface GiftRepository {
     guestName: string;
     guestWhatsapp?: string;
   }): Promise<ClaimRegistryItemResult>;
-  claimDiaperPack(input: {
+  claimBulkItem(input: {
     eventId: string;
     giftItemId: string;
     guestName: string;

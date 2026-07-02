@@ -4,7 +4,7 @@ import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { useOptimistic, useState, useTransition } from 'react';
 
-import { claimDiaperPackAction, claimRegistryItemAction } from '@/app/actions/gift.actions';
+import { claimBulkItemAction, claimRegistryItemAction } from '@/app/actions/gift.actions';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -33,11 +33,11 @@ const claimStrategyByCategory: Record<GiftCategory, GiftClaimStrategy> = {
     categoryLabel: 'Lista de presentes',
     claim: claimRegistryItemAction,
   },
-  [GiftCategory.DIAPER_PACK]: {
+  [GiftCategory.BULK_ITEM]: {
     ctaLabel: 'Reservar',
     claimedLabel: 'Obrigado pela reserva!',
     categoryLabel: 'Presente',
-    claim: claimDiaperPackAction,
+    claim: claimBulkItemAction,
     renderExtraFields: () => (
       <Input
         label="Quantidade"

@@ -25,7 +25,7 @@ domain -> application -> infrastructure/app. Nunca o inverso.
   repositório recebe a instância `db` (`NodePgDatabase`) via construtor —
   nunca importa o client de `./client.ts` diretamente dentro de si. A lógica
   atômica que já existia como função/trigger Postgres (`claim_gift_item`,
-  `upsert_rsvp`, fulfillment de fralda) continua no banco
+  `upsert_rsvp`, fulfillment de item em quantidade) continua no banco
   (`src/infrastructure/postgres/migrations/`); os repositórios chamam essas
   functions via SQL crua (`db.execute(sql\`select * from ...\`)`), nunca
   reimplementam essa lógica em TypeScript.
@@ -69,7 +69,7 @@ domain -> application -> infrastructure/app. Nunca o inverso.
 - **SRP** — um componente de formulário nunca chama o Postgres/S3 direto; um
   repositório nunca decide regra de negócio; um use case nunca renderiza nada.
 - **OCP** — o comportamento por categoria de presente (`REGISTRY_ITEM` vs
-  `DIAPER_PACK`) é um strategy map indexado por `GiftCategory`, não um
+  `BULK_ITEM`) é um strategy map indexado por `GiftCategory`, não um
   `if/else` espalhado pelos componentes. Nova categoria no futuro = nova
   entrada no map, sem editar branch existente.
 - **LSP** — qualquer implementação de `GiftRepository` precisa devolver os

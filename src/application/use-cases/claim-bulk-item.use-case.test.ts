@@ -7,7 +7,7 @@ import type {
   GiftRepository,
 } from '@/domain/repositories/gift-repository';
 
-import { claimDiaperPack } from './claim-diaper-pack.use-case';
+import { claimBulkItem } from './claim-bulk-item.use-case';
 
 const VALID_UUID = '123e4567-e89b-12d3-a456-426614174000';
 
@@ -22,7 +22,7 @@ class FakeGiftRepository implements GiftRepository {
     throw new Error('not implemented');
   }
 
-  async claimDiaperPack(input: {
+  async claimBulkItem(input: {
     giftItemId: string;
     guestName: string;
     quantity: number;
@@ -39,11 +39,11 @@ class FakeGiftRepository implements GiftRepository {
   }
 }
 
-describe('claimDiaperPack', () => {
+describe('claimBulkItem', () => {
   it('permite overshoot — não há teto de quantidade', async () => {
     const repository = new FakeGiftRepository();
 
-    const result = await claimDiaperPack(repository, {
+    const result = await claimBulkItem(repository, {
       eventId: VALID_UUID,
       giftItemId: VALID_UUID,
       guestName: 'Maria',
@@ -57,7 +57,7 @@ describe('claimDiaperPack', () => {
     const repository = new FakeGiftRepository();
 
     await expect(
-      claimDiaperPack(repository, { eventId: VALID_UUID, giftItemId: VALID_UUID, guestName: 'Maria', quantity: 0 }),
+      claimBulkItem(repository, { eventId: VALID_UUID, giftItemId: VALID_UUID, guestName: 'Maria', quantity: 0 }),
     ).rejects.toThrow();
   });
 });

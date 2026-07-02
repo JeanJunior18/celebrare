@@ -91,7 +91,7 @@ Substitui `src/config/event.config.ts` como fonte de verdade.
 
 Todas referenciam `events.id`, mantendo as regras de negócio já documentadas
 em @docs/domain-model.md (claim atômico via RPC, upsert de RSVP por
-whatsapp, overshoot de fralda):
+whatsapp, overshoot de item em quantidade):
 
 - `rsvps` (+ `event_id`)
 - `gift_items` (+ `event_id`)
@@ -124,7 +124,8 @@ whatsapp, overshoot de fralda):
 - Como convidado, quero confirmar presença informando nome, whatsapp e
   quantidade de acompanhantes.
 - Como convidado, quero reservar um item da lista de presentes, ou
-  contribuir com fraldas mesmo que já tenha sido reservado o suficiente.
+  contribuir com um item em quantidade mesmo que já tenha sido reservado o
+  suficiente.
 - Como convidado, quero deixar uma mensagem no mural do evento.
 - Como convidado, quero ver a galeria de fotos e a chave/QR code do pix.
 

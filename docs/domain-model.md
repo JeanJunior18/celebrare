@@ -27,8 +27,8 @@ passa pela RPC `upsert_rsvp` (ver regra de negócio #6); leitura só via
 | name | text | not null |
 | description | text | nullable |
 | image_url | text | nullable, Supabase Storage |
-| category | enum `gift_category` | REGISTRY_ITEM \| DIAPER_PACK |
-| size_label | text | nullable, só pra DIAPER_PACK |
+| category | enum `gift_category` | REGISTRY_ITEM \| BULK_ITEM |
+| size_label | text | nullable, só pra BULK_ITEM |
 | quantity_needed | int | > 0, default 1 |
 | status | enum `gift_status` | AVAILABLE \| CLAIMED \| FULFILLED |
 | created_at | timestamptz | default now() |
@@ -89,11 +89,13 @@ RLS: select liberado pra `anon` apenas. Insert só pela rota privada
    devolver `{ success: false, reason: 'ALREADY_CLAIMED' }` — nunca deixar
    propagar como throw não tratado (contrato de LSP da interface).
 
-2. **Diaper pack permite overshoot.** Insert direto em `gift_claims` com
-   `quantity_claimed`. Um trigger (`trg_diaper_pack_fulfillment`) soma todas
-   as claims daquele `gift_item_id` e marca `status = 'FULFILLED'` quando a
-   soma atinge `quantity_needed`. Sem teto — reservar mais do que falta é
-   permitido por design.
+2. **Item em quantidade (`BULK_ITEM`) permite overshoot.** Insert direto em
+   `gift_claims` com `quantity_claimed`. Um trigger
+   (`trg_bulk_gift_fulfillment`) soma todas as claims daquele
+   `gift_item_id` e marca `status = 'FULFILLED'` quando a soma atinge
+   `quantity_needed`. Sem teto — reservar mais do que falta é permitido por
+   design. Categoria genérica: serve pra roupas, fraldas ou qualquer
+   presente onde vários convidados podem contribuir.
 
 3. **PIX não é um `gift_item`.** É conteúdo estático de
    `config/event.config.ts` (chave + QR code) — nunca modelado como recurso
@@ -126,7 +128,7 @@ RLS: select liberado pra `anon` apenas. Insert só pela rota privada
 ## Enums (TypeScript — precisam bater exatamente com os enums do Postgres)
 
 ```ts
-enum GiftCategory { REGISTRY_ITEM = 'REGISTRY_ITEM', DIAPER_PACK = 'DIAPER_PACK' }
+enum GiftCategory { REGISTRY_ITEM = 'REGISTRY_ITEM', BULK_ITEM = 'BULK_ITEM' }
 enum GiftStatus { AVAILABLE = 'AVAILABLE', CLAIMED = 'CLAIMED', FULFILLED = 'FULFILLED' }
 enum BabyAgeStage {
   NEWBORN = 'NEWBORN', THREE_MONTHS = 'THREE_MONTHS', SIX_MONTHS = 'SIX_MONTHS',

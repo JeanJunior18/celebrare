@@ -15,8 +15,8 @@ export interface GiftRegistrySectionProps {
 
 export async function GiftRegistrySection({ event }: GiftRegistrySectionProps) {
   const repository = new PostgresGiftRepository(db);
-  const { registryItems, diaperPacks } = await listGiftItems(repository, event.id);
-  const allItems = [...registryItems, ...diaperPacks];
+  const { registryItems, bulkItems } = await listGiftItems(repository, event.id);
+  const allItems = [...registryItems, ...bulkItems];
   const { title, subtitle, description, pixCardTitle, pixCardSubtitle } = resolveEventCopy(event).giftRegistry;
 
   return (

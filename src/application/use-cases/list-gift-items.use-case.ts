@@ -4,7 +4,7 @@ import type { GiftRepository } from '@/domain/repositories/gift-repository';
 
 export interface ListGiftItemsResult {
   registryItems: GiftItem[];
-  diaperPacks: GiftItem[];
+  bulkItems: GiftItem[];
 }
 
 export async function listGiftItems(
@@ -15,6 +15,6 @@ export async function listGiftItems(
 
   return {
     registryItems: items.filter((item) => item.category === GiftCategory.REGISTRY_ITEM),
-    diaperPacks: items.filter((item) => item.category === GiftCategory.DIAPER_PACK),
+    bulkItems: items.filter((item) => item.category === GiftCategory.BULK_ITEM),
   };
 }

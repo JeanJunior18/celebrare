@@ -3,7 +3,7 @@ import { z } from 'zod';
 import type { GiftClaim } from '@/domain/entities/gift-claim';
 import type { GiftRepository } from '@/domain/repositories/gift-repository';
 
-const claimDiaperPackInputSchema = z.object({
+const claimBulkItemInputSchema = z.object({
   eventId: z.string().uuid(),
   giftItemId: z.string().uuid(),
   guestName: z.string().min(2),
@@ -11,12 +11,12 @@ const claimDiaperPackInputSchema = z.object({
   quantity: z.number().int().positive(),
 });
 
-export type ClaimDiaperPackInput = z.infer<typeof claimDiaperPackInputSchema>;
+export type ClaimBulkItemInput = z.infer<typeof claimBulkItemInputSchema>;
 
-export async function claimDiaperPack(
+export async function claimBulkItem(
   giftRepository: GiftRepository,
-  input: ClaimDiaperPackInput,
+  input: ClaimBulkItemInput,
 ): Promise<GiftClaim> {
-  const parsed = claimDiaperPackInputSchema.parse(input);
-  return giftRepository.claimDiaperPack(parsed);
+  const parsed = claimBulkItemInputSchema.parse(input);
+  return giftRepository.claimBulkItem(parsed);
 }

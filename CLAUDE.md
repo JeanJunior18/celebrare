@@ -46,7 +46,7 @@ Detalhe completo e mapeamento SOLID em `.claude/rules/architecture.md`.
 
 ## Domínio
 Entidades, tabelas, enums e regras de negócio (claim atômico de presente,
-fulfillment de fralda com overshoot, mural sem moderação): @docs/domain-model.md
+fulfillment de item em quantidade com overshoot, mural sem moderação): @docs/domain-model.md
 
 ## Identidade visual
 Paleta, tipografia, iconografia e mapeamento de seções pro mockup de

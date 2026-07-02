@@ -22,7 +22,7 @@ class FakeGiftRepository implements GiftRepository {
     throw new Error('not implemented');
   }
 
-  async claimDiaperPack(): Promise<GiftClaim> {
+  async claimBulkItem(): Promise<GiftClaim> {
     throw new Error('not implemented');
   }
 }
@@ -47,13 +47,13 @@ describe('listGiftItems', () => {
   it('agrupa itens por category', async () => {
     const repository = new FakeGiftRepository([
       buildGiftItem({ id: '1', category: GiftCategory.REGISTRY_ITEM }),
-      buildGiftItem({ id: '2', category: GiftCategory.DIAPER_PACK }),
+      buildGiftItem({ id: '2', category: GiftCategory.BULK_ITEM }),
       buildGiftItem({ id: '3', category: GiftCategory.REGISTRY_ITEM }),
     ]);
 
     const result = await listGiftItems(repository, 'event-1');
 
     expect(result.registryItems.map((item) => item.id)).toEqual(['1', '3']);
-    expect(result.diaperPacks.map((item) => item.id)).toEqual(['2']);
+    expect(result.bulkItems.map((item) => item.id)).toEqual(['2']);
   });
 });

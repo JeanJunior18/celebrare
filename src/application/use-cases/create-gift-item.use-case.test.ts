@@ -54,8 +54,8 @@ describe('createGiftItem', () => {
 
     await createGiftItem(repository, {
       eventId: VALID_UUID,
-      name: 'Pacote de fraldas G',
-      category: GiftCategory.DIAPER_PACK,
+      name: 'Kit de roupinhas G',
+      category: GiftCategory.BULK_ITEM,
       sizeLabel: 'G',
       image: fakeImage(),
     } as Parameters<typeof createGiftItem>[1]);

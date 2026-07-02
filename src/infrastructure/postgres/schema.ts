@@ -6,7 +6,7 @@ import { sql } from 'drizzle-orm';
 const createdAtColumn = () =>
   timestamp('created_at', { withTimezone: true, mode: 'string' }).notNull().defaultNow();
 
-export const giftCategoryEnum = pgEnum('gift_category', ['REGISTRY_ITEM', 'DIAPER_PACK']);
+export const giftCategoryEnum = pgEnum('gift_category', ['REGISTRY_ITEM', 'BULK_ITEM']);
 export const giftStatusEnum = pgEnum('gift_status', ['AVAILABLE', 'CLAIMED', 'FULFILLED']);
 export const babyAgeStageEnum = pgEnum('baby_age_stage', [
   'NEWBORN',

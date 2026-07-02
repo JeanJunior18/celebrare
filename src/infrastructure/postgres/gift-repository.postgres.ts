@@ -62,7 +62,7 @@ export class PostgresGiftRepository implements GiftRepository {
     }
   }
 
-  async claimDiaperPack(input: {
+  async claimBulkItem(input: {
     eventId: string;
     giftItemId: string;
     guestName: string;

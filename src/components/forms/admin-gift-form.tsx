@@ -16,7 +16,7 @@ import { GiftCategory } from '@/domain/enums/gift-category';
 
 const categoryOptions = [
   { value: GiftCategory.REGISTRY_ITEM, label: 'Item de lista' },
-  { value: GiftCategory.DIAPER_PACK, label: 'Pacote de fraldas' },
+  { value: GiftCategory.BULK_ITEM, label: 'Item em quantidade' },
 ];
 
 const emptyValues = { name: '', description: '', purchaseUrl: '', imageUrl: undefined as string | undefined };
@@ -111,7 +111,7 @@ export function AdminGiftForm({ action = createGiftItemAction }: AdminGiftFormPr
 
         <div className="flex flex-col gap-5 md:flex-row">
           <Select label="Categoria" name="category" options={categoryOptions} required />
-          <Input label="Tamanho (só pra fraldas)" name="sizeLabel" placeholder="Ex: G, XG" />
+          <Input label="Tamanho (opcional)" name="sizeLabel" placeholder="Ex: G, XG" />
         </div>
 
         <Input

@@ -22,7 +22,7 @@ class FakeGiftRepository implements GiftRepository {
     return this.result;
   }
 
-  async claimDiaperPack(): Promise<GiftClaim> {
+  async claimBulkItem(): Promise<GiftClaim> {
     throw new Error('not implemented');
   }
 }
