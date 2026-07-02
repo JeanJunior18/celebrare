@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-import { BoatIcon } from '@/components/ui/BoatIcon';
 import type { Event, SectionKey } from '@/domain/entities/event';
 
 export interface NavBarProps {
@@ -32,7 +31,9 @@ export function NavBar({ event }: NavBarProps) {
     <header className="sticky top-0 z-50 w-full border-b border-primary-100/60 bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
         <a href="#inicio" className="flex items-center gap-2 font-display text-sm uppercase tracking-[0.15em] text-primary-700">
-          <BoatIcon className="h-5 w-5" />
+          <span aria-hidden className="text-[var(--color-whimsy-yellow)]">
+            ✦
+          </span>
           {brand}
         </a>
 
