@@ -1,11 +1,16 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { BrandMark } from '@/components/brand-mark';
 import { LoginForm } from '@/components/forms/login-form';
 import { PlatformShell } from '@/components/platform-shell';
 import { SectionContainer } from '@/components/ui/SectionContainer';
+import { auth } from '@/infrastructure/auth/auth';
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth();
+  if (session?.user?.id) redirect('/dashboard');
+
   return (
     <PlatformShell>
       <main className="flex flex-1 flex-col">
