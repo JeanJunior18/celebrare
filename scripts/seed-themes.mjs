@@ -34,9 +34,12 @@ const birthdayColorTokens = {
   accentForeground: '#fffbf3',
 };
 
+// `{name}` é um placeholder literal, interpolado com `event.honoreeName`
+// em `resolveEventCopy` (src/domain/entities/event.ts) — mesma ideia do
+// hero, que já separa `titlePrefix` do nome renderizado à parte.
 const birthdayDefaultCopy = {
   nav: {
-    brand: 'Arca do Davi',
+    brand: 'Aniversário de {name}',
     links: [
       { href: '#inicio', label: 'Início' },
       { href: '#presenca', label: 'Presença' },
@@ -47,11 +50,10 @@ const birthdayDefaultCopy = {
     ],
   },
   hero: {
-    eyebrow: 'Você está convidado para embarcar na',
-    intro:
-      'Há 1 ano, Davi Asher chegou e trouxe ainda mais alegria para a nossa família. Chegou a hora de celebrar seu 1º aniversário ao lado de pessoas especiais.',
-    titlePrefix: 'Arca do',
-    tagline: 'Vai ser uma grande aventura com você!',
+    eyebrow: 'Você está convidado para celebrar',
+    intro: 'Chegou a hora de celebrar mais um aniversário ao lado de pessoas especiais.',
+    titlePrefix: 'O aniversário de',
+    tagline: 'Vai ser uma festa cheia de alegria com você!',
   },
   rsvp: {
     title: 'Confirme sua presença',
@@ -60,17 +62,16 @@ const birthdayDefaultCopy = {
   giftRegistry: {
     title: 'Lista de presentes',
     subtitle: 'O melhor presente é ter você conosco! Mas, se quiser nos presentear, escolha como preferir:',
-    description:
-      'Preparamos uma lista com algumas sugestões de presentes para o Davi. Ela serve apenas como inspiração: você pode comprar pelos links, escolher em outro lugar ou presentear da forma que preferir. Damos preferência a brinquedos educativos e pedagógicos, que ajudam no desenvolvimento e nas descobertas dessa fase.',
+    description: '',
     pixCardTitle: 'Pix presente',
     pixCardSubtitle: 'Contribua com qualquer valor.',
   },
-  gallery: { title: 'Um ano de aventuras' },
+  gallery: { title: 'Nossos momentos' },
   guestbook: {
-    title: 'Mensagem para o Davi',
-    subtitle: 'Deixe aqui uma mensagem cheia de carinho para o nosso pequeno navegador!',
+    title: 'Mensagem para {name}',
+    subtitle: 'Deixe aqui uma mensagem cheia de carinho!',
   },
-  footer: { signoff: 'Com amor, pela chegada de Davi 💚' },
+  footer: { signoff: 'Com amor, para {name} 💚' },
 };
 
 const weddingColorTokens = {
@@ -112,8 +113,7 @@ const weddingDefaultCopy = {
   giftRegistry: {
     title: 'Lista de casamento',
     subtitle: 'O melhor presente é ter você conosco! Mas, se quiser nos presentear, escolha como preferir:',
-    description:
-      'Preparamos uma lista com algumas sugestões de presentes pra ajudar a construir esse novo lar. Ela serve apenas como inspiração: você pode comprar pelos links, escolher em outro lugar ou presentear da forma que preferir.',
+    description: '',
     pixCardTitle: 'Pix de presente',
     pixCardSubtitle: 'Contribua com qualquer valor.',
   },

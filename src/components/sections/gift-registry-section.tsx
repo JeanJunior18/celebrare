@@ -21,22 +21,26 @@ export async function GiftRegistrySection({ event }: GiftRegistrySectionProps) {
 
   return (
     <SectionContainer id="presentes" title={title} subtitle={subtitle}>
-      <p className="mb-8 max-w-xl text-center font-body text-sm italic text-ink-soft">{description}</p>
+      {description && (
+        <p className="mb-8 max-w-xl text-center font-body text-sm italic text-ink-soft">{description}</p>
+      )}
 
       <div className="flex w-full flex-col gap-8">
-        {event.pixKey && event.pixQrCodeUrl && (
+        {event.pixKey && (
           <Card whimsyAccent className="flex flex-col items-center gap-2 text-center">
             <h3 className="font-display text-lg text-primary-700">{pixCardTitle}</h3>
             <p className="font-body text-sm text-ink-soft">{pixCardSubtitle}</p>
-            <div className="relative h-40 w-40 overflow-hidden rounded-xl border border-primary-100/60 bg-white">
-              <Image
-                src={event.pixQrCodeUrl}
-                alt="QR code Pix"
-                fill
-                className="object-contain p-2"
-                sizes="160px"
-              />
-            </div>
+            {event.pixQrCodeUrl && (
+              <div className="relative h-40 w-40 overflow-hidden rounded-xl border border-primary-100/60 bg-white">
+                <Image
+                  src={event.pixQrCodeUrl}
+                  alt="QR code Pix"
+                  fill
+                  className="object-contain p-2"
+                  sizes="160px"
+                />
+              </div>
+            )}
             <CopyPixKey pixKey={event.pixKey} />
           </Card>
         )}

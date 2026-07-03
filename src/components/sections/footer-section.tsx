@@ -1,4 +1,4 @@
-import type { Event } from '@/domain/entities/event';
+import { resolveEventCopy, type Event } from '@/domain/entities/event';
 
 export interface FooterSectionProps {
   event: Event;
@@ -17,7 +17,7 @@ export function FooterSection({ event }: FooterSectionProps) {
           {event.quoteReference}
         </p>
       )}
-      <p className="mt-6 font-body text-xs text-primary-200">{event.theme.defaultCopy.footer.signoff}</p>
+      <p className="mt-6 font-body text-xs text-primary-200">{resolveEventCopy(event).footer.signoff}</p>
     </footer>
   );
 }

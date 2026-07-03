@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import type { Event, SectionKey } from '@/domain/entities/event';
+import { resolveEventCopy, type Event, type SectionKey } from '@/domain/entities/event';
 
 export interface NavBarProps {
   event: Event;
@@ -21,7 +21,7 @@ const ANCHOR_TO_SECTION: Partial<Record<string, SectionKey>> = {
 
 export function NavBar({ event }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const { brand, links: allNavLinks } = event.theme.defaultCopy.nav;
+  const { brand, links: allNavLinks } = resolveEventCopy(event).nav;
   const navLinks = allNavLinks.filter((link) => {
     const section = ANCHOR_TO_SECTION[link.href];
     return !section || event.sectionVisibility[section];

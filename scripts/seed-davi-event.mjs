@@ -18,6 +18,25 @@ function requireEnv(name) {
 
 const DAVI_EVENT_SLUG = 'arca-do-davi';
 
+// Texto que era hardcoded no default do tema BIRTHDAY (agora genérico pra
+// servir qualquer host) e virou override só do evento do Davi, pra a
+// página dele não mudar.
+const daviCopyOverrides = {
+  nav: { brand: 'Arca do Davi' },
+  hero: {
+    eyebrow: 'Você está convidado para embarcar na',
+    titlePrefix: 'Arca do',
+    intro:
+      'Há 1 ano, Davi Asher chegou e trouxe ainda mais alegria para a nossa família. Chegou a hora de celebrar seu 1º aniversário ao lado de pessoas especiais.',
+  },
+  giftRegistry: {
+    description:
+      'Preparamos uma lista com algumas sugestões de presentes para o Davi. Ela serve apenas como inspiração: você pode comprar pelos links, escolher em outro lugar ou presentear da forma que preferir. Damos preferência a brinquedos educativos e pedagógicos, que ajudam no desenvolvimento e nas descobertas dessa fase.',
+  },
+  gallery: { title: 'Um ano de aventuras' },
+  guestbook: { subtitle: 'Deixe aqui uma mensagem cheia de carinho para o nosso pequeno navegador!' },
+};
+
 const daviEvent = {
   slug: DAVI_EVENT_SLUG,
   honoreeName: 'Davi',
@@ -32,6 +51,7 @@ const daviEvent = {
   quoteReference: 'Gênesis 7:9',
   pixKey: 'pix@asherlabs.com.br',
   pixQrCodeUrl: '/pix-qr-code.png',
+  copyOverrides: daviCopyOverrides,
 };
 
 const tablesWithEventId = ['rsvps', 'gift_items', 'gift_claims', 'guestbook_messages', 'gallery_photos'];
@@ -50,9 +70,9 @@ async function main() {
     `insert into events (
        theme_id, slug, honoree_name, subtitle_label, event_date, event_time,
        venue_name, venue_address, hero_image_url, google_maps_url, quote_text,
-       quote_reference, pix_key, pix_qr_code_url
+       quote_reference, pix_key, pix_qr_code_url, copy_overrides
      )
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
      on conflict (slug) do update set
        theme_id = excluded.theme_id,
        honoree_name = excluded.honoree_name,
@@ -66,7 +86,8 @@ async function main() {
        quote_text = excluded.quote_text,
        quote_reference = excluded.quote_reference,
        pix_key = excluded.pix_key,
-       pix_qr_code_url = excluded.pix_qr_code_url
+       pix_qr_code_url = excluded.pix_qr_code_url,
+       copy_overrides = excluded.copy_overrides
      returning id`,
     [
       themeId,
@@ -83,6 +104,7 @@ async function main() {
       daviEvent.quoteReference,
       daviEvent.pixKey,
       daviEvent.pixQrCodeUrl,
+      JSON.stringify(daviEvent.copyOverrides),
     ],
   );
   const eventId = eventRows[0].id;

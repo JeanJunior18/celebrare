@@ -1,6 +1,6 @@
 // Wordmark da plataforma (Celebrare) — usado só dentro de <PlatformShell>
 // (`/`, login, signup, dashboard). Página de evento (`/e/[slug]`) usa a
-// marca do próprio evento (`event.theme.defaultCopy.nav.brand`, ver
+// marca do próprio evento (`resolveEventCopy(event).nav.brand`, ver
 // NavBar), nunca essa.
 export function BrandMark() {
   return (

@@ -8,7 +8,8 @@ export type SectionVisibility = Record<SectionKey, boolean>;
 // evento — o resto do copy do tema continua compartilhado por todos os
 // eventos daquele tema (ver resolveEventCopy abaixo).
 export interface EventCopyOverrides {
-  hero?: { intro?: string };
+  nav?: { brand?: string };
+  hero?: { eyebrow?: string; titlePrefix?: string; intro?: string };
   rsvp?: { subtitle?: string };
   giftRegistry?: { subtitle?: string; description?: string };
   gallery?: { title?: string };
@@ -36,16 +37,33 @@ export interface Event {
   theme: Theme;
 }
 
+// O copy padrão de um tema é compartilhado por todos os eventos daquele
+// tema (ex: todo evento BIRTHDAY parte do mesmo texto genérico) e pode
+// referenciar o homenageado via placeholder literal `{name}`, substituído
+// aqui pelo `honoreeName` do evento — mesma ideia de hero.titlePrefix +
+// event.honoreeName, só que embutida no texto em vez de renderizada em
+// dois nós separados.
+function interpolateCopy(defaultCopy: ThemeDefaultCopy, honoreeName: string): ThemeDefaultCopy {
+  const escapedName = JSON.stringify(honoreeName).slice(1, -1);
+  return JSON.parse(JSON.stringify(defaultCopy).replaceAll('{name}', escapedName));
+}
+
 // Cada seção lê o copy resolvido daqui em vez de event.theme.defaultCopy
-// direto, pra respeitar o override por evento sem perder o resto do copy
-// do tema (nav e footer não têm override, passam direto).
+// direto, pra respeitar o override por evento e a interpolação de
+// `{name}` sem perder o resto do copy do tema.
 export function resolveEventCopy(event: Event): ThemeDefaultCopy {
-  const { defaultCopy } = event.theme;
+  const defaultCopy = interpolateCopy(event.theme.defaultCopy, event.honoreeName);
   const overrides = event.copyOverrides;
 
   return {
     ...defaultCopy,
-    hero: { ...defaultCopy.hero, intro: overrides.hero?.intro ?? defaultCopy.hero.intro },
+    nav: { ...defaultCopy.nav, brand: overrides.nav?.brand ?? defaultCopy.nav.brand },
+    hero: {
+      ...defaultCopy.hero,
+      eyebrow: overrides.hero?.eyebrow ?? defaultCopy.hero.eyebrow,
+      titlePrefix: overrides.hero?.titlePrefix ?? defaultCopy.hero.titlePrefix,
+      intro: overrides.hero?.intro ?? defaultCopy.hero.intro,
+    },
     rsvp: { ...defaultCopy.rsvp, subtitle: overrides.rsvp?.subtitle ?? defaultCopy.rsvp.subtitle },
     giftRegistry: {
       ...defaultCopy.giftRegistry,
