@@ -85,7 +85,7 @@ async function uploadImage(s3, publicUrlBase, itemId, imageUrl) {
 }
 
 async function main() {
-  const supabaseUrl = requireEnv('SUPABASE_URL');
+  const publicUrlBase = `${requireEnv('S3_PUBLIC_URL_BASE')}/media`;
   const databaseUrl = requireEnv('DATABASE_URL');
   const affiliateTool = requireEnv('MERCADOLIVRE_AFFILIATE_TOOL');
   const wishlistUrl = requireEnv('MERCADOLIVRE_WISHLIST_URL');
@@ -100,7 +100,6 @@ async function main() {
       secretAccessKey: requireEnv('S3_SECRET_ACCESS_KEY'),
     },
   });
-  const publicUrlBase = `${supabaseUrl}/storage/v1/object/public/media`;
   const pool = new Pool({ connectionString: databaseUrl });
 
   console.log(`Renderizando ${wishlistUrl}...`);
