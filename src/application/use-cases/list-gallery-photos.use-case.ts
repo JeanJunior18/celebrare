@@ -3,6 +3,7 @@ import type { GalleryRepository } from '@/domain/repositories/gallery-repository
 
 export async function listGalleryPhotos(
   galleryRepository: GalleryRepository,
+  eventId: string,
 ): Promise<GalleryPhoto[]> {
-  return galleryRepository.listOrdered();
+  return galleryRepository.listOrdered(eventId);
 }

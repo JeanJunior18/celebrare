@@ -2,7 +2,7 @@
 
 import { useActionState, useState, useTransition } from 'react';
 
-import { createGiftItemAction, fetchGiftLinkMetadataAction } from '@/app/actions/admin-gift.actions';
+import { fetchGiftLinkMetadataAction, type AdminGiftActionResult } from '@/app/actions/admin-gift.actions';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -12,13 +12,20 @@ import { GiftCategory } from '@/domain/enums/gift-category';
 
 const categoryOptions = [
   { value: GiftCategory.REGISTRY_ITEM, label: 'Item de lista' },
-  { value: GiftCategory.DIAPER_PACK, label: 'Pacote de fraldas' },
+  { value: GiftCategory.BULK_ITEM, label: 'Item em quantidade' },
 ];
 
 const emptyValues = { name: '', description: '', purchaseUrl: '', imageUrl: undefined as string | undefined };
 
-export function AdminGiftForm() {
-  const [state, formAction, isPending] = useActionState(createGiftItemAction, null);
+export interface AdminGiftFormProps {
+  // Action resolve o eventId da sessão do host — só há um consumidor hoje
+  // (`/dashboard/gifts`), mas fica como prop pra manter o form sem
+  // acoplamento a um evento específico.
+  action: (state: AdminGiftActionResult | null, formData: FormData) => Promise<AdminGiftActionResult>;
+}
+
+export function AdminGiftForm({ action }: AdminGiftFormProps) {
+  const [state, formAction, isPending] = useActionState(action, null);
   const [formKey, setFormKey] = useState(0);
   const [prevState, setPrevState] = useState(state);
   const [values, setValues] = useState(emptyValues);
@@ -100,7 +107,7 @@ export function AdminGiftForm() {
 
         <div className="flex flex-col gap-5 md:flex-row">
           <Select label="Categoria" name="category" options={categoryOptions} required />
-          <Input label="Tamanho (só pra fraldas)" name="sizeLabel" placeholder="Ex: G, XG" />
+          <Input label="Tamanho (opcional)" name="sizeLabel" placeholder="Ex: G, XG" />
         </div>
 
         <Input

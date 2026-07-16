@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
-import { BabyAgeStage } from '@/domain/enums/baby-age-stage';
 import type { GalleryPhoto } from '@/domain/entities/gallery-photo';
 import type { AdminGalleryRepository } from '@/domain/repositories/admin-gallery-repository';
 
 const createGalleryPhotoInputSchema = z.object({
-  ageLabel: z.enum(BabyAgeStage),
+  eventId: z.string().uuid(),
+  description: z.string().min(1),
   displayOrder: z.number().int().nonnegative(),
   image: z.instanceof(File),
 });

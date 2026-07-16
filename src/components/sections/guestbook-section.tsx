@@ -2,20 +2,22 @@ import { listGuestbookMessages } from '@/application/use-cases/list-guestbook-me
 import { GuestbookForm } from '@/components/forms/guestbook-form';
 import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
-import { createPublishableServerClient } from '@/infrastructure/supabase/publishable-server-client';
-import { SupabaseGuestbookRepository } from '@/infrastructure/supabase/guestbook-repository.supabase';
+import { resolveEventCopy, type Event } from '@/domain/entities/event';
+import { db } from '@/infrastructure/postgres/client';
+import { PostgresGuestbookRepository } from '@/infrastructure/postgres/guestbook-repository.postgres';
 
-export async function GuestbookSection() {
-  const repository = new SupabaseGuestbookRepository(createPublishableServerClient());
-  const messages = await listGuestbookMessages(repository);
+export interface GuestbookSectionProps {
+  event: Event;
+}
+
+export async function GuestbookSection({ event }: GuestbookSectionProps) {
+  const repository = new PostgresGuestbookRepository(db);
+  const messages = await listGuestbookMessages(repository, event.id);
+  const { title, subtitle } = resolveEventCopy(event).guestbook;
 
   return (
-    <SectionContainer
-      id="mensagens"
-      title="Mensagem para o Davi"
-      subtitle="Deixe aqui uma mensagem cheia de carinho para o nosso pequeno navegador!"
-    >
-      <GuestbookForm />
+    <SectionContainer id="mensagens" title={title} subtitle={subtitle}>
+      <GuestbookForm eventId={event.id} honoreeName={event.honoreeName} />
 
       {messages.length > 0 && (
         <div className="mt-10 grid w-full gap-4 md:grid-cols-2">

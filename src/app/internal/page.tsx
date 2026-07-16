@@ -4,8 +4,8 @@ import { Card } from '@/components/ui/Card';
 import { SectionContainer } from '@/components/ui/SectionContainer';
 
 const screens = [
-  { href: '/internal/gifts', title: 'Presentes', description: 'Adicionar item na lista de presentes.' },
-  { href: '/internal/photos', title: 'Fotos', description: 'Adicionar foto na galeria do Davi.' },
+  { href: '/internal/events', title: 'Eventos', description: 'Ver todos os eventos da plataforma.' },
+  { href: '/internal/themes', title: 'Temas', description: 'Criar/editar temas disponíveis pra novos eventos.' },
 ];
 
 export default function InternalIndexPage() {

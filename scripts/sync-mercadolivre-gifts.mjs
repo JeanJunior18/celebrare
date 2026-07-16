@@ -13,11 +13,12 @@
 //   npx playwright install chromium   (só na primeira vez)
 //   node scripts/sync-mercadolivre-gifts.mjs
 
-import { createClient } from '@supabase/supabase-js';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { Pool } from 'pg';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -68,7 +69,7 @@ function cleanPermalink(href) {
   return url.toString();
 }
 
-async function uploadImage(supabase, itemId, imageUrl) {
+async function uploadImage(s3, publicUrlBase, itemId, imageUrl) {
   const response = await fetch(imageUrl);
   if (!response.ok) throw new Error(`Falha ao baixar imagem de ${itemId}: HTTP ${response.status}`);
   const buffer = Buffer.from(await response.arrayBuffer());
@@ -76,23 +77,30 @@ async function uploadImage(supabase, itemId, imageUrl) {
   const ext = contentType.includes('jpeg') ? 'jpg' : contentType.includes('png') ? 'png' : 'webp';
   const storagePath = `gifts/${itemId}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from('media')
-    .upload(storagePath, buffer, { upsert: true, contentType });
-  if (error) throw error;
+  await s3.send(
+    new PutObjectCommand({ Bucket: 'media', Key: storagePath, Body: buffer, ContentType: contentType }),
+  );
 
-  const { data } = supabase.storage.from('media').getPublicUrl(storagePath);
-  return data.publicUrl;
+  return `${publicUrlBase}/${storagePath}`;
 }
 
 async function main() {
-  const supabaseUrl = requireEnv('SUPABASE_URL');
-  const secretKey = requireEnv('SUPABASE_SECRET_KEY');
+  const publicUrlBase = `${requireEnv('S3_PUBLIC_URL_BASE')}/media`;
+  const databaseUrl = requireEnv('DATABASE_URL');
   const affiliateTool = requireEnv('MERCADOLIVRE_AFFILIATE_TOOL');
   const wishlistUrl = requireEnv('MERCADOLIVRE_WISHLIST_URL');
 
   const giftList = JSON.parse(readFileSync(path.join(__dirname, 'gift-list.json'), 'utf8'));
-  const supabase = createClient(supabaseUrl, secretKey);
+  const s3 = new S3Client({
+    region: requireEnv('S3_REGION'),
+    endpoint: requireEnv('S3_ENDPOINT'),
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: requireEnv('S3_ACCESS_KEY_ID'),
+      secretAccessKey: requireEnv('S3_SECRET_ACCESS_KEY'),
+    },
+  });
+  const pool = new Pool({ connectionString: databaseUrl });
 
   console.log(`Renderizando ${wishlistUrl}...`);
   const cards = await scrapeWishlistCards(wishlistUrl);
@@ -114,33 +122,40 @@ async function main() {
     }
 
     console.log(`Sincronizando ${entry.itemId} — ${card.title}`);
-    const imageUrl = await uploadImage(supabase, entry.itemId, card.image);
+    const imageUrl = await uploadImage(s3, publicUrlBase, entry.itemId, card.image);
     const purchaseUrl = `${cleanPermalink(card.href)}?matt_tool=${affiliateTool}`;
 
-    const { data: existing } = await supabase
-      .from('gift_items')
-      .select('id')
-      .eq('external_id', entry.itemId)
-      .maybeSingle();
-
-    const { error } = await supabase.from('gift_items').upsert(
-      {
-        external_id: entry.itemId,
-        name: card.title,
-        category: entry.category,
-        size_label: entry.sizeLabel ?? null,
-        quantity_needed: entry.quantityNeeded ?? 1,
-        image_url: imageUrl,
-        purchase_url: purchaseUrl,
-      },
-      { onConflict: 'external_id' },
+    const { rows: existingRows } = await pool.query(
+      'select id from gift_items where external_id = $1',
+      [entry.itemId],
     );
-    if (error) throw error;
 
-    if (existing) updated += 1;
+    await pool.query(
+      `insert into gift_items (external_id, name, category, size_label, quantity_needed, image_url, purchase_url)
+       values ($1, $2, $3, $4, $5, $6, $7)
+       on conflict (external_id) do update set
+         name = excluded.name,
+         category = excluded.category,
+         size_label = excluded.size_label,
+         quantity_needed = excluded.quantity_needed,
+         image_url = excluded.image_url,
+         purchase_url = excluded.purchase_url`,
+      [
+        entry.itemId,
+        card.title,
+        entry.category,
+        entry.sizeLabel ?? null,
+        entry.quantityNeeded ?? 1,
+        imageUrl,
+        purchaseUrl,
+      ],
+    );
+
+    if (existingRows.length > 0) updated += 1;
     else created += 1;
   }
 
+  await pool.end();
   console.log(`\nConcluído: ${created} criado(s), ${updated} atualizado(s).`);
 }
 

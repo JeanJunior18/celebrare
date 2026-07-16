@@ -2,26 +2,39 @@
 
 import { useState } from 'react';
 
-import { BoatIcon } from '@/components/ui/BoatIcon';
+import { resolveEventCopy, type Event, type SectionKey } from '@/domain/entities/event';
 
-const navLinks = [
-  { href: '#inicio', label: 'Início' },
-  { href: '#presenca', label: 'Presença' },
-  { href: '#presentes', label: 'Presentes' },
-  { href: '#como-chegar', label: 'Como chegar' },
-  { href: '#galeria', label: 'Galeria' },
-  { href: '#mensagens', label: 'Mensagens' },
-];
+export interface NavBarProps {
+  event: Event;
+}
 
-export function NavBar() {
+// Âncoras que dependem de um bloco que o host pode ocultar — ver
+// components/sections/*.tsx pros `id` de cada seção e event-page.tsx pro
+// gate de visibilidade. Hero não entra aqui (nunca é ocultável).
+const ANCHOR_TO_SECTION: Partial<Record<string, SectionKey>> = {
+  '#presenca': 'rsvp',
+  '#presentes': 'giftRegistry',
+  '#como-chegar': 'location',
+  '#galeria': 'gallery',
+  '#mensagens': 'guestbook',
+};
+
+export function NavBar({ event }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { brand, links: allNavLinks } = resolveEventCopy(event).nav;
+  const navLinks = allNavLinks.filter((link) => {
+    const section = ANCHOR_TO_SECTION[link.href];
+    return !section || event.sectionVisibility[section];
+  });
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-primary-100/60 bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
         <a href="#inicio" className="flex items-center gap-2 font-display text-sm uppercase tracking-[0.15em] text-primary-700">
-          <BoatIcon className="h-5 w-5" />
-          Arca do Davi
+          <span aria-hidden className="text-[var(--color-whimsy-yellow)]">
+            ✦
+          </span>
+          {brand}
         </a>
 
         <nav className="hidden items-center gap-6 md:flex">

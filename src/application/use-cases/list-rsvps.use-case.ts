@@ -6,8 +6,8 @@ export interface ListRsvpsResult {
   totalConfirmed: number;
 }
 
-export async function listRsvps(rsvpRepository: RsvpRepository): Promise<ListRsvpsResult> {
-  const rsvps = await rsvpRepository.listAll();
+export async function listRsvps(rsvpRepository: RsvpRepository, eventId: string): Promise<ListRsvpsResult> {
+  const rsvps = await rsvpRepository.listAll(eventId);
   const totalConfirmed = rsvps.reduce((total, rsvp) => total + 1 + rsvp.companionCount, 0);
 
   return { rsvps, totalConfirmed };

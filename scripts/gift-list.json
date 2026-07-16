@@ -11,7 +11,7 @@
   { "itemId": "MLB4125158721", "category": "REGISTRY_ITEM" },
   { "itemId": "MLB5273196134", "category": "REGISTRY_ITEM" },
   { "itemId": "MLB4184409153", "category": "REGISTRY_ITEM" },
-  { "itemId": "MLB3740724974", "category": "DIAPER_PACK", "sizeLabel": "XG", "quantityNeeded": 1 },
-  { "itemId": "MLB4555599230", "category": "DIAPER_PACK", "sizeLabel": "XG", "quantityNeeded": 1 },
+  { "itemId": "MLB3740724974", "category": "BULK_ITEM", "sizeLabel": "XG", "quantityNeeded": 1 },
+  { "itemId": "MLB4555599230", "category": "BULK_ITEM", "sizeLabel": "XG", "quantityNeeded": 1 },
   { "itemId": "MLB5788200548", "category": "REGISTRY_ITEM" }
 ]

@@ -24,7 +24,7 @@ describe('listRsvps', () => {
       { id: '2', guestName: 'João', companionCount: 0, whatsappNumber: '', createdAt: '' },
     ]);
 
-    const result = await listRsvps(repository);
+    const result = await listRsvps(repository, 'event-1');
 
     expect(result.rsvps).toHaveLength(2);
     expect(result.totalConfirmed).toBe(4);
@@ -33,7 +33,7 @@ describe('listRsvps', () => {
   it('retorna totalConfirmed zero quando não há rsvps', async () => {
     const repository = new FakeRsvpRepository([]);
 
-    const result = await listRsvps(repository);
+    const result = await listRsvps(repository, 'event-1');
 
     expect(result.totalConfirmed).toBe(0);
   });

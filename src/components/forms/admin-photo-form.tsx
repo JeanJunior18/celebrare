@@ -2,27 +2,15 @@
 
 import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
 
-import {
-  createGalleryPhotoAction,
-  getNextGalleryDisplayOrderAction,
-} from '@/app/actions/admin-gallery.actions';
+import type { AdminGalleryActionResult } from '@/app/actions/dashboard.actions';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
-import { BabyAgeStage } from '@/domain/enums/baby-age-stage';
-
-const ageStageOptions = [
-  { value: BabyAgeStage.NEWBORN, label: 'Recém-nascido' },
-  { value: BabyAgeStage.THREE_MONTHS, label: '3 meses' },
-  { value: BabyAgeStage.SIX_MONTHS, label: '6 meses' },
-  { value: BabyAgeStage.NINE_MONTHS, label: '9 meses' },
-  { value: BabyAgeStage.ONE_YEAR, label: '1 ano' },
-];
 
 interface SelectedPhoto {
+  id: string;
   file: File;
-  ageLabel: BabyAgeStage;
+  description: string;
 }
 
 interface SubmitResult {
@@ -30,7 +18,17 @@ interface SubmitResult {
   message?: string;
 }
 
-export function AdminPhotoForm() {
+export interface AdminPhotoFormProps {
+  // Mesmo motivo do `action` em AdminGiftForm — actions resolvem o eventId
+  // da sessão do host.
+  createPhotoAction: (
+    state: AdminGalleryActionResult | null,
+    formData: FormData,
+  ) => Promise<AdminGalleryActionResult>;
+  getNextDisplayOrder: () => Promise<number>;
+}
+
+export function AdminPhotoForm({ createPhotoAction, getNextDisplayOrder }: AdminPhotoFormProps) {
   const [photos, setPhotos] = useState<SelectedPhoto[]>([]);
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
@@ -47,7 +45,7 @@ export function AdminPhotoForm() {
 
   function handleFilesChange(event: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
-    setPhotos(files.map((file) => ({ file, ageLabel: BabyAgeStage.NEWBORN })));
+    setPhotos(files.map((file) => ({ id: crypto.randomUUID(), file, description: '' })));
     setResult(null);
   }
 
@@ -55,9 +53,9 @@ export function AdminPhotoForm() {
     setPhotos((current) => current.filter((_, photoIndex) => photoIndex !== index));
   }
 
-  function handleAgeLabelChange(index: number, ageLabel: BabyAgeStage) {
+  function handleDescriptionChange(index: number, description: string) {
     setPhotos((current) =>
-      current.map((photo, photoIndex) => (photoIndex === index ? { ...photo, ageLabel } : photo)),
+      current.map((photo, photoIndex) => (photoIndex === index ? { ...photo, description } : photo)),
     );
   }
 
@@ -72,15 +70,15 @@ export function AdminPhotoForm() {
     let firstError: string | undefined;
 
     try {
-      const baseDisplayOrder = await getNextGalleryDisplayOrderAction();
+      const baseDisplayOrder = await getNextDisplayOrder();
 
       for (const [index, photo] of photos.entries()) {
         const photoFormData = new FormData();
-        photoFormData.set('ageLabel', photo.ageLabel);
+        photoFormData.set('description', photo.description);
         photoFormData.set('displayOrder', String(baseDisplayOrder + index));
         photoFormData.set('image', photo.file);
 
-        const photoResult = await createGalleryPhotoAction(null, photoFormData);
+        const photoResult = await createPhotoAction(null, photoFormData);
         if (photoResult.success) {
           addedCount += 1;
         } else {
@@ -122,7 +120,7 @@ export function AdminPhotoForm() {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {photos.map((photo, index) => (
               <div
-                key={previewUrls[index]}
+                key={photo.id}
                 className="flex flex-col gap-2 rounded-xl border border-primary-200 p-2"
               >
                 <div className="relative aspect-square overflow-hidden rounded-lg">
@@ -141,13 +139,12 @@ export function AdminPhotoForm() {
                     ×
                   </button>
                 </div>
-                <Select
-                  label="Fase"
-                  options={ageStageOptions}
-                  value={photo.ageLabel}
-                  onChange={(event) =>
-                    handleAgeLabelChange(index, event.target.value as BabyAgeStage)
-                  }
+                <Input
+                  label="Descrição"
+                  placeholder="Ex: 1 mês, Ensaio, Recepção..."
+                  value={photo.description}
+                  onChange={(event) => handleDescriptionChange(index, event.target.value)}
+                  required
                 />
               </div>
             ))}

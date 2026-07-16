@@ -1,5 +1,5 @@
 {
-  "name": "arca-do-davi",
+  "name": "celebrare",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,20 +8,32 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "sync:gifts": "node scripts/sync-mercadolivre-gifts.mjs"
+    "sync:gifts": "node --env-file=.env scripts/sync-mercadolivre-gifts.mjs",
+    "db:generate": "node --env-file=.env node_modules/.bin/drizzle-kit generate",
+    "db:migrate": "node --env-file=.env scripts/migrate-postgres.mjs",
+    "db:seed-themes": "node --env-file=.env scripts/seed-themes.mjs",
+    "db:seed-davi-event": "node --env-file=.env scripts/seed-davi-event.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.108.2",
+    "@auth/drizzle-adapter": "^1.11.2",
+    "@aws-sdk/client-s3": "^3.1075.0",
+    "bcryptjs": "^3.0.3",
+    "drizzle-orm": "^0.45.2",
     "next": "16.2.9",
+    "next-auth": "^5.0.0-beta.31",
+    "pg": "^8.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "playwright": "^1.61.0",

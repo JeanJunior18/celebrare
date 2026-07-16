@@ -4,7 +4,7 @@ import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { useOptimistic, useState, useTransition } from 'react';
 
-import { claimDiaperPackAction, claimRegistryItemAction } from '@/app/actions/gift.actions';
+import { claimBulkItemAction, claimRegistryItemAction } from '@/app/actions/gift.actions';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -15,6 +15,7 @@ import { GiftStatus } from '@/domain/enums/gift-status';
 
 export interface GiftCardProps {
   item: GiftItem;
+  eventId: string;
 }
 
 interface GiftClaimStrategy {
@@ -32,11 +33,11 @@ const claimStrategyByCategory: Record<GiftCategory, GiftClaimStrategy> = {
     categoryLabel: 'Lista de presentes',
     claim: claimRegistryItemAction,
   },
-  [GiftCategory.DIAPER_PACK]: {
+  [GiftCategory.BULK_ITEM]: {
     ctaLabel: 'Reservar',
     claimedLabel: 'Obrigado pela reserva!',
     categoryLabel: 'Presente',
-    claim: claimDiaperPackAction,
+    claim: claimBulkItemAction,
     renderExtraFields: () => (
       <Input
         label="Quantidade"
@@ -77,7 +78,7 @@ function GiftThumbnail({ item, onOpen }: { item: GiftItem; onOpen: () => void })
   );
 }
 
-export function GiftCard({ item }: GiftCardProps) {
+export function GiftCard({ item, eventId }: GiftCardProps) {
   const strategy = claimStrategyByCategory[item.category];
   const [confirmedItem, setConfirmedItem] = useState(item);
   const [optimisticItem, setOptimisticItem] = useOptimistic(confirmedItem);
@@ -88,6 +89,7 @@ export function GiftCard({ item }: GiftCardProps) {
   const isClaimed = optimisticItem.status !== GiftStatus.AVAILABLE;
 
   function handleSubmit(formData: FormData) {
+    formData.set('eventId', eventId);
     formData.set('giftItemId', item.id);
     setFeedback(null);
 

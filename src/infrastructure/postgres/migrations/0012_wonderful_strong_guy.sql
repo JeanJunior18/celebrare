@@ -1,0 +1,1 @@
+ALTER TABLE "events" ADD COLUMN "hero_image_url" text;

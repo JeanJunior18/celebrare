@@ -33,7 +33,7 @@ border-radius grande), ícone opcional ao lado do texto (♡, 📍, 📱, ✎).
 ## Iconografia
 
 Ícones de linha (outline), traço fino, cor verde oliva: calendário, relógio,
-pin de localização, caixa de presente, coração, fralda, smartphone, lápis.
+pin de localização, caixa de presente, coração, camiseta, smartphone, lápis.
 Coração (♡) é usado como divisor decorativo entre título e subtítulo em
 quase toda seção.
 
@@ -68,17 +68,19 @@ viewport mobile primeiro, só depois adicione os breakpoints de desktop.
    Campos mapeiam 1:1 com `rsvps` (`guest_name`, `companion_count`,
    `whatsapp_number`) — ver @docs/domain-model.md.
 5. **GiftSection** — heading + subtítulo + 3 cards (Lista de Presentes / Pix
-   Presente / Fraldas), cada um com ícone, título, descrição curta e botão
-   próprio. Mobile: cards empilhados em coluna única. Desktop: grid de 3
-   colunas. Os 3 cards mapeiam pra duas origens de dados diferentes:
-   "Lista de Presentes" e "Fraldas" são `gift_items` filtrados por
-   `category` (`REGISTRY_ITEM` / `DIAPER_PACK`); "Pix Presente" é conteúdo
+   Presente / Item em quantidade), cada um com ícone, título, descrição curta
+   e botão próprio. Mobile: cards empilhados em coluna única. Desktop: grid
+   de 3 colunas. Os 3 cards mapeiam pra duas origens de dados diferentes:
+   "Lista de Presentes" e "Item em quantidade" são `gift_items` filtrados por
+   `category` (`REGISTRY_ITEM` / `BULK_ITEM`); "Pix Presente" é conteúdo
    estático de `config/event.config.ts` (não é um gift_item — regra de
    negócio #3 do domain model).
-6. **GallerySection** — heading + carousel horizontal de fotos com label de
-   idade abaixo de cada uma, com swipe/scroll nativo no mobile. Os 5 labels
-   do mockup (RECÉM-NASCIDO, 3 MESES, 6 MESES, 9 MESES, 1 ANO) correspondem
-   exatamente ao enum `BabyAgeStage`.
+6. **GallerySection** — heading + carousel horizontal de fotos com legenda
+   abaixo de cada uma, com swipe/scroll nativo no mobile. A legenda é um
+   texto livre digitado pelo host (campo `description`), não mais um enum
+   fixo de fases do bebê — o mockup original mostrava RECÉM-NASCIDO,
+   3 MESES, 6 MESES, 9 MESES, 1 ANO, mas isso é só um exemplo de conteúdo,
+   não uma lista fixa de opções.
 7. **GuestbookSection** — heading + subtítulo + botão "Deixar mensagem"
    (abre form/modal pra escrever no mural).
 8. **Footer** — ilustração pequena da arca + citação bíblica (Gênesis 7:9)

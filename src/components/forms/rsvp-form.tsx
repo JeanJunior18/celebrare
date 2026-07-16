@@ -25,7 +25,11 @@ function formatWhatsapp(rawValue: string): string {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-export function RsvpForm() {
+export interface RsvpFormProps {
+  eventId: string;
+}
+
+export function RsvpForm({ eventId }: RsvpFormProps) {
   const [state, formAction, isPending] = useActionState<RsvpActionResult | null, FormData>(
     confirmAttendanceAction,
     null,
@@ -59,6 +63,7 @@ export function RsvpForm() {
         onSubmit={(event) => captureValuesBeforeSubmit(event.currentTarget)}
         className="flex flex-col gap-5"
       >
+        <input type="hidden" name="eventId" value={eventId} />
         {askToUpdate && state.status === 'ALREADY_EXISTS' ? (
           <>
             <input type="hidden" name="guestName" value={state.guestName} />

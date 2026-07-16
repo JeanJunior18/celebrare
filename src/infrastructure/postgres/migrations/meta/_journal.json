@@ -1,0 +1,118 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1782354940406,
+      "tag": "0000_graceful_hellcat",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782354940407,
+      "tag": "0001_functions_and_triggers",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782356577295,
+      "tag": "0002_wise_micromax",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782357275622,
+      "tag": "0003_lonely_tomorrow_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782357383702,
+      "tag": "0004_next_moon_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782357383703,
+      "tag": "0005_default_event_id_function",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782357481885,
+      "tag": "0006_right_black_bolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1782358065255,
+      "tag": "0007_steady_the_captain",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1782359883255,
+      "tag": "0008_young_wolverine",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1782359883256,
+      "tag": "0009_upsert_rsvp_per_event",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1782359883257,
+      "tag": "0010_drop_legacy_upsert_rsvp",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1782359883258,
+      "tag": "0011_claim_gift_item_per_event",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1782360804997,
+      "tag": "0012_wonderful_strong_guy",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1782957565206,
+      "tag": "0013_volatile_jane_foster",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1782960201864,
+      "tag": "0014_rename_diaper_pack_to_bulk_item",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1782961461183,
+      "tag": "0015_generalize_age_label_to_description",
+      "breakpoints": true
+    }
+  ]
+}
