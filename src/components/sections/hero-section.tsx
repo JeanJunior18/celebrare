@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Badge } from '@/components/ui/Badge';
+import { HeroImageFallback } from '@/components/ui/HeroImageFallback';
 import { HeartDivider } from '@/components/ui/SectionContainer';
 import { resolveEventCopy, type Event } from '@/domain/entities/event';
 
@@ -47,8 +48,8 @@ export function HeroSection({ event }: HeroSectionProps) {
           <p className="mt-4 max-w-xs font-script text-2xl text-primary-600 lg:order-3 lg:mt-6">{tagline}</p>
         </div>
 
-        {imageUrl && (
-          <div className="relative mt-10 h-48 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary-200/60 shadow-card lg:mt-0 lg:h-80 lg:flex-1">
+        <div className="relative mt-10 h-48 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary-200/60 shadow-card lg:mt-0 lg:h-80 lg:flex-1">
+          {imageUrl ? (
             <Image
               src={imageUrl}
               alt={`Foto de ${event.honoreeName}`}
@@ -57,8 +58,10 @@ export function HeroSection({ event }: HeroSectionProps) {
               className="object-cover object-top"
               priority
             />
-          </div>
-        )}
+          ) : (
+            <HeroImageFallback honoreeName={event.honoreeName} />
+          )}
+        </div>
       </div>
     </section>
   );

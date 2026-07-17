@@ -72,6 +72,26 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -8%, 0) scale(1.08);
+  }
+}
+
+.animate-float-soft {
+  animation: float-soft 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-soft {
+    animation: none;
+  }
+}
+
 section[id] {
   scroll-margin-top: 4.5rem;
 }
