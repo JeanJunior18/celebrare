@@ -7,7 +7,9 @@ import { createEvent } from '@/application/use-cases/create-event.use-case';
 import { createGalleryPhoto } from '@/application/use-cases/create-gallery-photo.use-case';
 import { createGiftItem } from '@/application/use-cases/create-gift-item.use-case';
 import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gallery-display-order.use-case';
+import { updateEventFooter } from '@/application/use-cases/update-event-footer.use-case';
 import { updateEventHero } from '@/application/use-cases/update-event-hero.use-case';
+import { updateEventLocation } from '@/application/use-cases/update-event-location.use-case';
 import { updateEventSection } from '@/application/use-cases/update-event-section.use-case';
 import type { Event, SectionKey } from '@/domain/entities/event';
 import type { GiftCategory } from '@/domain/enums/gift-category';
@@ -167,6 +169,66 @@ export async function updateDashboardEventSectionAction(
     revalidatePath('/dashboard/edit');
     return { success: true };
   } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface UpdateDashboardEventLocationResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function updateDashboardEventLocationAction(
+  _prevState: UpdateDashboardEventLocationResult | null,
+  formData: FormData,
+): Promise<UpdateDashboardEventLocationResult> {
+  try {
+    const event = await requireHostEvent();
+    const repository = new PostgresEventRepository(db);
+
+    await updateEventLocation(repository, event, {
+      eventDate: String(formData.get('eventDate') ?? ''),
+      eventTime: String(formData.get('eventTime') ?? ''),
+      venueName: String(formData.get('venueName') ?? ''),
+      venueAddress: String(formData.get('venueAddress') ?? ''),
+      googleMapsUrl: formData.get('googleMapsUrl')?.toString() || '',
+    });
+
+    revalidatePath('/dashboard/edit');
+    return { success: true };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface UpdateDashboardEventFooterResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function updateDashboardEventFooterAction(
+  _prevState: UpdateDashboardEventFooterResult | null,
+  formData: FormData,
+): Promise<UpdateDashboardEventFooterResult> {
+  try {
+    const event = await requireHostEvent();
+    const repository = new PostgresEventRepository(db);
+
+    await updateEventFooter(repository, event, {
+      quoteText: formData.get('quoteText')?.toString() || '',
+      quoteReference: formData.get('quoteReference')?.toString() || '',
+      signoff: formData.get('signoff')?.toString() || '',
+    });
+
+    revalidatePath('/dashboard/edit');
+    return { success: true };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
   }
 }

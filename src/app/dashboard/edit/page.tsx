@@ -2,7 +2,9 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { EditEventSectionForm, type EditEventSectionField } from '@/components/forms/edit-event-section-form';
+import { EditFooterForm } from '@/components/forms/edit-footer-form';
 import { EditHeroForm } from '@/components/forms/edit-hero-form';
+import { EditLocationForm } from '@/components/forms/edit-location-form';
 import { SectionContainer } from '@/components/ui/SectionContainer';
 import { resolveEventCopy, type Event, type SectionKey } from '@/domain/entities/event';
 import { auth } from '@/infrastructure/auth/auth';
@@ -106,6 +108,14 @@ export default async function DashboardEditPage() {
             overrideIntro={event.copyOverrides.hero?.intro ?? ''}
           />
 
+          <EditLocationForm
+            eventDate={event.eventDate}
+            eventTime={event.eventTime}
+            venueName={event.venueName}
+            venueAddress={event.venueAddress}
+            googleMapsUrl={event.googleMapsUrl}
+          />
+
           {sections.map((section) => (
             <EditEventSectionForm
               key={section}
@@ -115,6 +125,13 @@ export default async function DashboardEditPage() {
               fields={buildSectionFields(event, section)}
             />
           ))}
+
+          <EditFooterForm
+            quoteText={event.quoteText ?? ''}
+            quoteReference={event.quoteReference ?? ''}
+            signoff={copy.footer.signoff}
+            overrideSignoff={event.copyOverrides.footer?.signoff ?? ''}
+          />
         </div>
       </SectionContainer>
     </main>

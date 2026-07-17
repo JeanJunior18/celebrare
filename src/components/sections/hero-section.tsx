@@ -24,10 +24,10 @@ export function HeroSection({ event }: HeroSectionProps) {
 
       <div className="relative mx-auto flex max-w-xl flex-col items-center text-center lg:max-w-5xl lg:flex-row lg:items-center lg:gap-16 lg:text-left">
         <div className="flex flex-col items-center lg:items-start">
-          <p className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-primary-600 lg:hidden">
+          <p className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-primary-600">
             {eyebrow}
           </p>
-          <p className="hidden max-w-md font-body text-base leading-relaxed text-ink-soft lg:order-2 lg:mt-6 lg:block">
+          <p className="mt-3 max-w-md font-body text-base leading-relaxed text-ink-soft lg:order-2 lg:mt-6">
             {intro}
           </p>
 
@@ -44,7 +44,7 @@ export function HeroSection({ event }: HeroSectionProps) {
             <HeartDivider />
           </div>
 
-          <p className="mt-4 max-w-xs font-script text-2xl text-primary-600 lg:hidden">{tagline}</p>
+          <p className="mt-4 max-w-xs font-script text-2xl text-primary-600 lg:order-3 lg:mt-6">{tagline}</p>
         </div>
 
         {imageUrl && (

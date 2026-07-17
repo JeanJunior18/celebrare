@@ -14,6 +14,7 @@ export interface EventCopyOverrides {
   giftRegistry?: { subtitle?: string; description?: string };
   gallery?: { title?: string };
   guestbook?: { subtitle?: string };
+  footer?: { signoff?: string };
 }
 
 export interface Event {
@@ -72,5 +73,6 @@ export function resolveEventCopy(event: Event): ThemeDefaultCopy {
     },
     gallery: { ...defaultCopy.gallery, title: overrides.gallery?.title ?? defaultCopy.gallery.title },
     guestbook: { ...defaultCopy.guestbook, subtitle: overrides.guestbook?.subtitle ?? defaultCopy.guestbook.subtitle },
+    footer: { ...defaultCopy.footer, signoff: overrides.footer?.signoff ?? defaultCopy.footer.signoff },
   };
 }
