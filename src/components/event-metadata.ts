@@ -9,7 +9,9 @@ import type { Event } from '@/domain/entities/event';
 // contra `metadataBase` (app/layout.tsx).
 export function buildEventMetadata(event: Event): Metadata {
   const { titlePrefix } = event.theme.defaultCopy.hero;
-  const title = `${titlePrefix} ${event.honoreeName} — ${event.subtitleLabel}`;
+  const title = event.subtitleLabel
+    ? `${titlePrefix} ${event.honoreeName} — ${event.subtitleLabel}`
+    : `${titlePrefix} ${event.honoreeName}`;
   const description = `Convite e confirmação de presença para ${titlePrefix} ${event.honoreeName}.`;
   const rawImageUrl = event.heroImageUrl ?? event.theme.defaultIllustrationUrl;
   const imageUrl = rawImageUrl

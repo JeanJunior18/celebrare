@@ -22,7 +22,7 @@ export interface Event {
   ownerUserId: string | null;
   slug: string;
   honoreeName: string;
-  subtitleLabel: string;
+  subtitleLabel: string | null;
   eventDate: string;
   eventTime: string;
   venueName: string;

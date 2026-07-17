@@ -90,7 +90,7 @@ export const events = pgTable('events', {
   themeId: uuid('theme_id').notNull().references(() => themes.id),
   slug: text('slug').notNull().unique(),
   honoreeName: text('honoree_name').notNull(),
-  subtitleLabel: text('subtitle_label').notNull(),
+  subtitleLabel: text('subtitle_label'),
   eventDate: date('event_date').notNull(),
   eventTime: time('event_time').notNull(),
   venueName: text('venue_name').notNull(),

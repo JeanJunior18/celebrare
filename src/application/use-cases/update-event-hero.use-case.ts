@@ -7,6 +7,7 @@ const updateEventHeroInputSchema = z.object({
   image: z.instanceof(File).optional(),
   imageUrl: z.string().url().optional(),
   heroIntro: z.string().optional(),
+  subtitleLabel: z.string().optional(),
 });
 
 export type UpdateEventHeroInput = z.infer<typeof updateEventHeroInputSchema>;

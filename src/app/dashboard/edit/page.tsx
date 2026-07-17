@@ -106,6 +106,7 @@ export default async function DashboardEditPage() {
             heroImageUrl={event.heroImageUrl}
             intro={copy.hero.intro}
             overrideIntro={event.copyOverrides.hero?.intro ?? ''}
+            subtitleLabel={event.subtitleLabel}
           />
 
           <EditLocationForm

@@ -58,7 +58,7 @@ export async function createDashboardEventAction(
       ownerUserId,
       themeId: String(formData.get('themeId') ?? ''),
       honoreeName: String(formData.get('honoreeName') ?? ''),
-      subtitleLabel: String(formData.get('subtitleLabel') ?? ''),
+      subtitleLabel: formData.get('subtitleLabel')?.toString() || undefined,
       eventDate: String(formData.get('eventDate') ?? ''),
       eventTime: String(formData.get('eventTime') ?? ''),
       venueName: String(formData.get('venueName') ?? ''),
@@ -253,6 +253,7 @@ export async function updateDashboardEventHeroAction(
       image,
       imageUrl: formData.get('imageUrl')?.toString() || undefined,
       heroIntro: formData.get('heroIntro')?.toString() || undefined,
+      subtitleLabel: formData.get('subtitleLabel')?.toString() ?? '',
     });
 
     revalidatePath('/dashboard/edit');

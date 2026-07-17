@@ -5,7 +5,7 @@ export interface CreateEventInput {
   themeId: string;
   slug: string;
   honoreeName: string;
-  subtitleLabel: string;
+  subtitleLabel?: string;
   eventDate: string;
   eventTime: string;
   venueName: string;
@@ -27,6 +27,7 @@ export interface UpdateEventHeroInput {
   image?: File;
   imageUrl?: string;
   heroIntro?: string;
+  subtitleLabel?: string;
 }
 
 export interface EventRepository {

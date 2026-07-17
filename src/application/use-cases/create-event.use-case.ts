@@ -8,7 +8,7 @@ const createEventInputSchema = z.object({
   ownerUserId: z.string().uuid(),
   themeId: z.string().uuid(),
   honoreeName: z.string().min(2),
-  subtitleLabel: z.string().min(1),
+  subtitleLabel: z.string().optional(),
   eventDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida.'),
   eventTime: z.string().regex(/^\d{2}:\d{2}$/, 'Horário inválido.'),
   venueName: z.string().min(2),

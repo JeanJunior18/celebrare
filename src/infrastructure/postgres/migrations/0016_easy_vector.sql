@@ -1,0 +1,1 @@
+ALTER TABLE "events" ALTER COLUMN "subtitle_label" DROP NOT NULL;

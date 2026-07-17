@@ -12,9 +12,10 @@ export interface EditHeroFormProps {
   heroImageUrl: string | null;
   intro: string;
   overrideIntro: string;
+  subtitleLabel: string | null;
 }
 
-export function EditHeroForm({ heroImageUrl, intro, overrideIntro }: EditHeroFormProps) {
+export function EditHeroForm({ heroImageUrl, intro, overrideIntro, subtitleLabel }: EditHeroFormProps) {
   const [state, formAction, isPending] = useActionState(updateDashboardEventHeroAction, null);
 
   return (
@@ -39,6 +40,13 @@ export function EditHeroForm({ heroImageUrl, intro, overrideIntro }: EditHeroFor
           placeholder={intro}
           defaultValue={overrideIntro}
           rows={3}
+        />
+
+        <Input
+          label="Selo (opcional)"
+          name="subtitleLabel"
+          placeholder="ex: 1 aninho — deixe em branco pra esconder"
+          defaultValue={subtitleLabel ?? ''}
         />
 
         <div className="mt-2 flex flex-col items-start gap-2">

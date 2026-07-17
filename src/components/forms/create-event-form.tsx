@@ -34,10 +34,9 @@ export function CreateEventForm({ themes }: CreateEventFormProps) {
         <div className="flex flex-col gap-5 md:flex-row">
           <Input label="Nome do aniversariante/casal" name="honoreeName" required minLength={2} className="flex-1" />
           <Input
-            label="Subtítulo"
+            label="Selo (opcional)"
             name="subtitleLabel"
-            placeholder="ex: 1 aninho, Casamento"
-            required
+            placeholder="ex: 1 aninho — deixe em branco pra esconder"
             className="flex-1"
           />
         </div>

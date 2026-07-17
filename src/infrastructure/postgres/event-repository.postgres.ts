@@ -81,7 +81,7 @@ export class PostgresEventRepository implements EventRepository {
         themeId: input.themeId,
         slug: input.slug,
         honoreeName: input.honoreeName,
-        subtitleLabel: input.subtitleLabel,
+        subtitleLabel: input.subtitleLabel ?? null,
         eventDate: input.eventDate,
         eventTime: input.eventTime,
         venueName: input.venueName,
@@ -137,7 +137,9 @@ export class PostgresEventRepository implements EventRepository {
           : existingCopyOverrides.hero,
     };
 
-    await this.db.update(events).set({ heroImageUrl, copyOverrides }).where(eq(events.id, eventId));
+    const subtitleLabel = input.subtitleLabel !== undefined ? input.subtitleLabel || null : existing.subtitleLabel;
+
+    await this.db.update(events).set({ heroImageUrl, copyOverrides, subtitleLabel }).where(eq(events.id, eventId));
 
     const event = await this.findBySlug(existing.slug);
     if (!event) throw new Error('Falha ao carregar o evento atualizado.');

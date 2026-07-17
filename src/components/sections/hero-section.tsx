@@ -39,7 +39,9 @@ export function HeroSection({ event }: HeroSectionProps) {
             {event.honoreeName}
           </p>
 
-          <Badge className="mt-4 px-5 py-2 text-base lg:order-1">{event.subtitleLabel}</Badge>
+          {event.subtitleLabel && (
+            <Badge className="mt-4 px-5 py-2 text-base lg:order-1">{event.subtitleLabel}</Badge>
+          )}
 
           <div className="mt-4 lg:order-1">
             <HeartDivider />
