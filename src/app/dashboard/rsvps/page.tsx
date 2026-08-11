@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation';
 
+import { deleteDashboardRsvpAction, updateDashboardRsvpCompanionCountAction } from '@/app/actions/dashboard.actions';
 import { listRsvps } from '@/application/use-cases/list-rsvps.use-case';
 import { DashboardBackLink } from '@/components/dashboard-back-link';
-import { Card } from '@/components/ui/Card';
+import { RsvpList } from '@/components/dashboard/rsvp-list';
 import { SectionContainer } from '@/components/ui/SectionContainer';
 import { auth } from '@/infrastructure/auth/auth';
 import { db } from '@/infrastructure/postgres/client';
@@ -29,23 +30,11 @@ export default async function DashboardRsvpsPage() {
         title="Confirmações de presença"
         subtitle={`${totalConfirmed} pessoa(s) confirmada(s) (convidados + acompanhantes).`}
       >
-        {rsvps.length === 0 ? (
-          <p className="font-body text-ink-soft">Ninguém confirmou presença ainda.</p>
-        ) : (
-          <div className="grid w-full max-w-2xl gap-3">
-            {rsvps.map((rsvp) => (
-              <Card key={rsvp.id} className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="font-display text-primary-700">{rsvp.guestName}</p>
-                  <p className="font-body text-xs text-ink-soft">{rsvp.whatsappNumber}</p>
-                </div>
-                <span className="font-body text-sm text-ink-soft">
-                  +{rsvp.companionCount} {rsvp.companionCount === 1 ? 'acompanhante' : 'acompanhantes'}
-                </span>
-              </Card>
-            ))}
-          </div>
-        )}
+        <RsvpList
+          rsvps={rsvps}
+          deleteAction={deleteDashboardRsvpAction}
+          updateCompanionCountAction={updateDashboardRsvpCompanionCountAction}
+        />
       </SectionContainer>
     </main>
   );

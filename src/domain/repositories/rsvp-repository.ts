@@ -15,4 +15,7 @@ export interface RsvpRepository {
   }): Promise<RsvpUpsertResult>;
   // só deve ser chamado por código autenticado de host/operador, nunca por convidado.
   listAll(eventId: string): Promise<Rsvp[]>;
+  // escopado por eventId pra um host nunca conseguir mexer no rsvp de outro evento.
+  delete(id: string, eventId: string): Promise<void>;
+  updateCompanionCount(id: string, eventId: string, companionCount: number): Promise<void>;
 }

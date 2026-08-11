@@ -30,6 +30,14 @@ class FakeRsvpRepository implements RsvpRepository {
   async listAll(): Promise<Rsvp[]> {
     return [];
   }
+
+  async delete(): Promise<void> {
+    throw new Error('not implemented');
+  }
+
+  async updateCompanionCount(): Promise<void> {
+    throw new Error('not implemented');
+  }
 }
 
 describe('confirmAttendance', () => {

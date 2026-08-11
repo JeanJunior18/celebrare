@@ -6,11 +6,13 @@ import { ZodError } from 'zod';
 import { createEvent } from '@/application/use-cases/create-event.use-case';
 import { createGalleryPhoto } from '@/application/use-cases/create-gallery-photo.use-case';
 import { createGiftItem } from '@/application/use-cases/create-gift-item.use-case';
+import { deleteRsvp } from '@/application/use-cases/delete-rsvp.use-case';
 import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gallery-display-order.use-case';
 import { updateEventFooter } from '@/application/use-cases/update-event-footer.use-case';
 import { updateEventHero } from '@/application/use-cases/update-event-hero.use-case';
 import { updateEventLocation } from '@/application/use-cases/update-event-location.use-case';
 import { updateEventSection } from '@/application/use-cases/update-event-section.use-case';
+import { updateRsvpCompanionCount } from '@/application/use-cases/update-rsvp-companion-count.use-case';
 import type { Event, SectionKey } from '@/domain/entities/event';
 import type { GiftCategory } from '@/domain/enums/gift-category';
 import { auth } from '@/infrastructure/auth/auth';
@@ -19,6 +21,7 @@ import { PostgresAdminGalleryRepository } from '@/infrastructure/postgres/admin-
 import { PostgresAdminGiftRepository } from '@/infrastructure/postgres/admin-gift-repository.postgres';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresEventRepository } from '@/infrastructure/postgres/event-repository.postgres';
+import { PostgresRsvpRepository } from '@/infrastructure/postgres/rsvp-repository.postgres';
 import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-repository.postgres';
 import { createMediaStorage } from '@/infrastructure/storage/s3-media-storage';
 
@@ -259,6 +262,48 @@ export async function updateDashboardEventHeroAction(
     revalidatePath('/dashboard/edit');
     return { success: true };
   } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface DashboardRsvpMutationResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function deleteDashboardRsvpAction(rsvpId: string): Promise<DashboardRsvpMutationResult> {
+  try {
+    const eventId = await requireHostEventId();
+    const repository = new PostgresRsvpRepository(db);
+
+    await deleteRsvp(repository, { id: rsvpId, eventId });
+
+    revalidatePath('/dashboard/rsvps');
+    return { success: true };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export async function updateDashboardRsvpCompanionCountAction(
+  rsvpId: string,
+  companionCount: number,
+): Promise<DashboardRsvpMutationResult> {
+  try {
+    const eventId = await requireHostEventId();
+    const repository = new PostgresRsvpRepository(db);
+
+    await updateRsvpCompanionCount(repository, { id: rsvpId, eventId, companionCount });
+
+    revalidatePath('/dashboard/rsvps');
+    return { success: true };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
   }
 }

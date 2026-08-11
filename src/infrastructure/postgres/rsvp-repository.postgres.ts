@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { Rsvp } from '@/domain/entities/rsvp';
@@ -41,5 +41,16 @@ export class PostgresRsvpRepository implements RsvpRepository {
 
   async listAll(eventId: string): Promise<Rsvp[]> {
     return this.db.select().from(rsvps).where(eq(rsvps.eventId, eventId));
+  }
+
+  async delete(id: string, eventId: string): Promise<void> {
+    await this.db.delete(rsvps).where(and(eq(rsvps.id, id), eq(rsvps.eventId, eventId)));
+  }
+
+  async updateCompanionCount(id: string, eventId: string, companionCount: number): Promise<void> {
+    await this.db
+      .update(rsvps)
+      .set({ companionCount })
+      .where(and(eq(rsvps.id, id), eq(rsvps.eventId, eventId)));
   }
 }
