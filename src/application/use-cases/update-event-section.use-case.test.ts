@@ -29,10 +29,15 @@ function buildEvent(overrides: Partial<Event> = {}): Event {
     theme: {
       id: VALID_UUID,
       slug: 'WEDDING',
-      name: 'Casamento',
+      name: 'Verde & Blush',
       colorTokens: {} as Event['theme']['colorTokens'],
-      defaultCopy: {} as Event['theme']['defaultCopy'],
       defaultIllustrationUrl: null,
+    },
+    occasion: {
+      id: VALID_UUID,
+      slug: 'WEDDING',
+      name: 'Casamento',
+      defaultCopy: {} as Event['occasion']['defaultCopy'],
     },
     ...overrides,
   };

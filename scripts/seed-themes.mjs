@@ -1,12 +1,12 @@
 // Seed dos temas da plataforma (tabela `themes`) — dado, não enum/arquivo TS,
-// pra permitir adicionar um 3º tema futuramente sem deploy de código.
-// Ver docs/saas-platform-plan.md, fase 3.
+// pra permitir adicionar um novo tema futuramente sem deploy de código.
+// Controla só a paleta visual (cor + ilustração padrão); o texto padrão
+// (nav/hero/rsvp/...) vive em `occasions` (ver scripts/seed-occasions.mjs)
+// — cada evento escolhe as duas independentemente.
 //
-// BIRTHDAY: cores e textos extraídos do que já está em produção hoje
-// (src/app/globals.css + componentes de seção hardcoded pro evento do Davi).
-// WEDDING: placeholder — não existe mockup de referência ainda (ver
-// docs/visual-identity.md); paleta e copy genéricas até a fase 7, quando o
-// primeiro evento desse tema for criado.
+// `slug` é só uma chave interna estável pro upsert, sem relação com o
+// `name` (o que aparece nos selects) — por isso os slugs ainda dizem
+// BIRTHDAY/WEDDING mesmo os temas hoje descrevendo só cor.
 //
 // Idempotente: upsert por `slug`, seguro pra rodar de novo.
 //
@@ -20,7 +20,7 @@ function requireEnv(name) {
   return value;
 }
 
-const birthdayColorTokens = {
+const oliveColorTokens = {
   primary: {
     50: '#f5f7ee', 100: '#e8ecd7', 200: '#d2dbb1', 300: '#b7c687', 400: '#98ac63',
     500: '#7c9249', 600: '#5f6f44', 700: '#4a5736', 800: '#38422a', 900: '#272d1e',
@@ -34,47 +34,7 @@ const birthdayColorTokens = {
   accentForeground: '#fffbf3',
 };
 
-// `{name}` é um placeholder literal, interpolado com `event.honoreeName`
-// em `resolveEventCopy` (src/domain/entities/event.ts) — mesma ideia do
-// hero, que já separa `titlePrefix` do nome renderizado à parte.
-const birthdayDefaultCopy = {
-  nav: {
-    brand: 'Aniversário de {name}',
-    links: [
-      { href: '#inicio', label: 'Início' },
-      { href: '#presenca', label: 'Presença' },
-      { href: '#presentes', label: 'Presentes' },
-      { href: '#como-chegar', label: 'Como chegar' },
-      { href: '#galeria', label: 'Galeria' },
-      { href: '#mensagens', label: 'Mensagens' },
-    ],
-  },
-  hero: {
-    eyebrow: 'Você está convidado para celebrar',
-    intro: 'Chegou a hora de celebrar mais um aniversário ao lado de pessoas especiais.',
-    titlePrefix: 'O aniversário de',
-    tagline: 'Vai ser uma festa cheia de alegria com você!',
-  },
-  rsvp: {
-    title: 'Confirme sua presença',
-    subtitle: 'Sua presença tornará esse dia ainda mais especial!',
-  },
-  giftRegistry: {
-    title: 'Lista de presentes',
-    subtitle: 'O melhor presente é ter você conosco! Mas, se quiser nos presentear, escolha como preferir:',
-    description: '',
-    pixCardTitle: 'Pix presente',
-    pixCardSubtitle: 'Contribua com qualquer valor.',
-  },
-  gallery: { title: 'Nossos momentos' },
-  guestbook: {
-    title: 'Mensagem para {name}',
-    subtitle: 'Deixe aqui uma mensagem cheia de carinho!',
-  },
-  footer: { signoff: 'Com amor, para {name} 💚' },
-};
-
-const weddingColorTokens = {
+const sageBlushColorTokens = {
   primary: {
     50: '#f3f6f1', 100: '#e3ebdd', 200: '#c7d7ba', 300: '#a8c093', 400: '#8aa872',
     500: '#6f8f57', 600: '#577044', 700: '#445737', 800: '#33422a', 900: '#232d1d',
@@ -88,58 +48,24 @@ const weddingColorTokens = {
   accentForeground: '#fffdf9',
 };
 
-const weddingDefaultCopy = {
-  nav: {
-    brand: 'Nosso Casamento',
-    links: [
-      { href: '#inicio', label: 'Início' },
-      { href: '#presenca', label: 'Presença' },
-      { href: '#presentes', label: 'Lista de casamento' },
-      { href: '#como-chegar', label: 'Como chegar' },
-      { href: '#galeria', label: 'Galeria' },
-      { href: '#mensagens', label: 'Mensagens' },
-    ],
+const pinkColorTokens = {
+  primary: {
+    50: '#fdf2f7', 100: '#fce4ee', 200: '#f8c2dc', 300: '#f292bf', 400: '#e8619d',
+    500: '#d63e80', 600: '#b32c66', 700: '#8f2251', 800: '#6b1a3d', 900: '#47122a',
   },
-  hero: {
-    eyebrow: 'Você está convidado para celebrar',
-    intro: 'Depois de uma linda história, chegou a hora de dizermos sim e celebrar esse novo capítulo ao lado de quem amamos.',
-    titlePrefix: 'O casamento de',
-    tagline: 'Vai ser uma festa cheia de amor com você!',
-  },
-  rsvp: {
-    title: 'Confirme sua presença',
-    subtitle: 'Sua presença tornará esse dia ainda mais especial!',
-  },
-  giftRegistry: {
-    title: 'Lista de casamento',
-    subtitle: 'O melhor presente é ter você conosco! Mas, se quiser nos presentear, escolha como preferir:',
-    description: '',
-    pixCardTitle: 'Pix de presente',
-    pixCardSubtitle: 'Contribua com qualquer valor.',
-  },
-  gallery: { title: 'Nossa história em fotos' },
-  guestbook: {
-    title: 'Mensagem para os noivos',
-    subtitle: 'Deixe aqui uma mensagem cheia de carinho para celebrar esse novo capítulo!',
-  },
-  footer: { signoff: 'Com amor, por esse novo começo 💚' },
+  secondary: { 100: '#fdf1e3', 300: '#f3d29a', 500: '#e0aa55', 700: '#ad7d34' },
+  whimsy: { pink: '#f9c9dd', yellow: '#f7e2a8', sky: '#bfe0ee', mint: '#c8e8d2' },
+  background: '#fef8fb',
+  surface: '#ffffff',
+  ink: '#5c4550',
+  inkSoft: '#8f7784',
+  accentForeground: '#fffbfd',
 };
 
 const themeSeeds = [
-  {
-    slug: 'BIRTHDAY',
-    name: 'Aniversário',
-    colorTokens: birthdayColorTokens,
-    defaultCopy: birthdayDefaultCopy,
-    defaultIllustrationUrl: null,
-  },
-  {
-    slug: 'WEDDING',
-    name: 'Casamento',
-    colorTokens: weddingColorTokens,
-    defaultCopy: weddingDefaultCopy,
-    defaultIllustrationUrl: null,
-  },
+  { slug: 'BIRTHDAY', name: 'Oliva & Terracota', colorTokens: oliveColorTokens, defaultIllustrationUrl: null },
+  { slug: 'WEDDING', name: 'Verde & Blush', colorTokens: sageBlushColorTokens, defaultIllustrationUrl: null },
+  { slug: 'PINK', name: 'Rosa e Branco', colorTokens: pinkColorTokens, defaultIllustrationUrl: null },
 ];
 
 async function main() {
@@ -148,20 +74,13 @@ async function main() {
 
   for (const theme of themeSeeds) {
     await pool.query(
-      `insert into themes (slug, name, color_tokens, default_copy, default_illustration_url)
-       values ($1, $2, $3, $4, $5)
+      `insert into themes (slug, name, color_tokens, default_illustration_url)
+       values ($1, $2, $3, $4)
        on conflict (slug) do update set
          name = excluded.name,
          color_tokens = excluded.color_tokens,
-         default_copy = excluded.default_copy,
          default_illustration_url = excluded.default_illustration_url`,
-      [
-        theme.slug,
-        theme.name,
-        JSON.stringify(theme.colorTokens),
-        JSON.stringify(theme.defaultCopy),
-        theme.defaultIllustrationUrl,
-      ],
+      [theme.slug, theme.name, JSON.stringify(theme.colorTokens), theme.defaultIllustrationUrl],
     );
     console.log(`Tema ${theme.slug} sincronizado.`);
   }

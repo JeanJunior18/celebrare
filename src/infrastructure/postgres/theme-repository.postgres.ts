@@ -13,7 +13,6 @@ export function toTheme(row: typeof themes.$inferSelect): Theme {
     slug: row.slug,
     name: row.name,
     colorTokens: row.colorTokens as Theme['colorTokens'],
-    defaultCopy: row.defaultCopy as Theme['defaultCopy'],
     defaultIllustrationUrl: row.defaultIllustrationUrl,
   };
 }
@@ -38,7 +37,6 @@ export class PostgresThemeRepository implements ThemeRepository {
         slug: input.slug,
         name: input.name,
         colorTokens: input.colorTokens,
-        defaultCopy: input.defaultCopy,
         defaultIllustrationUrl: input.defaultIllustrationUrl ?? null,
       })
       .returning();

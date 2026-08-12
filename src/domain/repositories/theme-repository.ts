@@ -1,10 +1,9 @@
-import type { Theme, ThemeColorTokens, ThemeDefaultCopy } from '@/domain/entities/theme';
+import type { Theme, ThemeColorTokens } from '@/domain/entities/theme';
 
 export interface CreateThemeInput {
   slug: string;
   name: string;
   colorTokens: ThemeColorTokens;
-  defaultCopy: ThemeDefaultCopy;
   defaultIllustrationUrl?: string;
 }
 

@@ -8,13 +8,15 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import type { Occasion } from '@/domain/entities/occasion';
 import type { Theme } from '@/domain/entities/theme';
 
 export interface CreateEventFormProps {
   themes: Theme[];
+  occasions: Occasion[];
 }
 
-export function CreateEventForm({ themes }: CreateEventFormProps) {
+export function CreateEventForm({ themes, occasions }: CreateEventFormProps) {
   const [state, formAction, isPending] = useActionState(createDashboardEventAction, null);
 
   if (state?.success) {
@@ -24,12 +26,22 @@ export function CreateEventForm({ themes }: CreateEventFormProps) {
   return (
     <Card whimsyAccent className="w-full max-w-2xl">
       <form action={formAction} className="flex flex-col gap-5">
-        <Select
-          label="Tema"
-          name="themeId"
-          required
-          options={themes.map((theme) => ({ value: theme.id, label: theme.name }))}
-        />
+        <div className="flex flex-col gap-5 md:flex-row">
+          <Select
+            label="Ocasião"
+            name="occasionId"
+            required
+            className="flex-1"
+            options={occasions.map((occasion) => ({ value: occasion.id, label: occasion.name }))}
+          />
+          <Select
+            label="Tema"
+            name="themeId"
+            required
+            className="flex-1"
+            options={themes.map((theme) => ({ value: theme.id, label: theme.name }))}
+          />
+        </div>
 
         <div className="flex flex-col gap-5 md:flex-row">
           <Input label="Nome do aniversariante/casal" name="honoreeName" required minLength={2} className="flex-1" />

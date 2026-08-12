@@ -66,15 +66,27 @@ export const galleryPhotos = pgTable('gallery_photos', {
 });
 
 // Tema é dado, não enum — permite adicionar um 3º tema sem deploy de
-// código (docs/saas-platform-plan.md, fase 3). Ainda não consumida pelo
-// app: passa a ser lida quando `events.theme_id` existir (fase 4).
+// código (docs/saas-platform-plan.md, fase 3). Controla só a paleta
+// visual (cor + ilustração padrão) — o texto padrão (nav/hero/rsvp/...)
+// vive em `occasions`, decidido independentemente por evento (ver
+// `occasions` abaixo e `events.occasionId`).
 export const themes = pgTable('themes', {
   id: uuid('id').primaryKey().defaultRandom(),
   slug: text('slug').notNull().unique(),
   name: text('name').notNull(),
   colorTokens: jsonb('color_tokens').notNull(),
-  defaultCopy: jsonb('default_copy').notNull(),
   defaultIllustrationUrl: text('default_illustration_url'),
+  createdAt: createdAtColumn(),
+});
+
+// Ocasião (tipo de evento: aniversário, casamento, ...) — controla só o
+// texto padrão (`defaultCopy`), independente da cor (`themes`). Dado, não
+// enum, mesma razão de `themes`.
+export const occasions = pgTable('occasions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: text('slug').notNull().unique(),
+  name: text('name').notNull(),
+  defaultCopy: jsonb('default_copy').notNull(),
   createdAt: createdAtColumn(),
 });
 
@@ -88,6 +100,7 @@ export const events = pgTable('events', {
   // criados via signup (fase 7).
   ownerUserId: uuid('owner_user_id').references(() => users.id),
   themeId: uuid('theme_id').notNull().references(() => themes.id),
+  occasionId: uuid('occasion_id').notNull().references(() => occasions.id),
   slug: text('slug').notNull().unique(),
   honoreeName: text('honoree_name').notNull(),
   subtitleLabel: text('subtitle_label'),

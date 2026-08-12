@@ -22,7 +22,7 @@ export default async function InternalEventsPage() {
                 <div>
                   <p className="font-display text-primary-700">{event.honoreeName}</p>
                   <p className="font-body text-xs text-ink-soft">
-                    /e/{event.slug} · {event.theme.name} ·{' '}
+                    /e/{event.slug} · {event.occasion.name} · {event.theme.name} ·{' '}
                     {event.ownerUserId ? 'com host' : 'sem host (legado)'}
                   </p>
                 </div>

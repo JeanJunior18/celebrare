@@ -5,11 +5,15 @@ import { EditEventSectionForm, type EditEventSectionField } from '@/components/f
 import { EditFooterForm } from '@/components/forms/edit-footer-form';
 import { EditHeroForm } from '@/components/forms/edit-hero-form';
 import { EditLocationForm } from '@/components/forms/edit-location-form';
+import { EditOccasionForm } from '@/components/forms/edit-occasion-form';
+import { EditThemeForm } from '@/components/forms/edit-theme-form';
 import { SectionContainer } from '@/components/ui/SectionContainer';
 import { resolveEventCopy, type Event, type SectionKey } from '@/domain/entities/event';
 import { auth } from '@/infrastructure/auth/auth';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresEventRepository } from '@/infrastructure/postgres/event-repository.postgres';
+import { PostgresOccasionRepository } from '@/infrastructure/postgres/occasion-repository.postgres';
+import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-repository.postgres';
 
 export const dynamic = 'force-dynamic';
 
@@ -81,6 +85,10 @@ export default async function DashboardEditPage() {
   const event = await eventRepository.findByOwnerUserId(session.user.id);
   if (!event) redirect('/dashboard');
 
+  const themeRepository = new PostgresThemeRepository(db);
+  const occasionRepository = new PostgresOccasionRepository(db);
+  const [themes, occasions] = await Promise.all([themeRepository.listAll(), occasionRepository.listAll()]);
+
   const copy = resolveEventCopy(event);
   const sections: SectionKey[] = ['rsvp', 'giftRegistry', 'location', 'gallery', 'guestbook'];
 
@@ -102,6 +110,10 @@ export default async function DashboardEditPage() {
 
       <SectionContainer title="Editar página" subtitle="Textos, foto do hero e blocos visíveis.">
         <div className="flex w-full max-w-2xl flex-col gap-6">
+          <EditOccasionForm occasions={occasions} currentOccasionId={event.occasion.id} />
+
+          <EditThemeForm themes={themes} currentThemeId={event.theme.id} />
+
           <EditHeroForm
             heroImageUrl={event.heroImageUrl}
             intro={copy.hero.intro}

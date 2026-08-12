@@ -79,7 +79,11 @@ domain -> application -> infrastructure/app. Nunca o inverso.
 - **ISP** — interfaces de repositório pequenas, uma por domínio
   (`RsvpRepository`, `GiftRepository`, `GuestbookRepository`,
   `GalleryRepository`, `HostRepository`, `EventRepository`,
-  `ThemeRepository`). Nunca fundir num repositório genérico.
+  `ThemeRepository`, `OccasionRepository`). Nunca fundir num repositório
+  genérico. `ThemeRepository` controla só paleta de cor; `OccasionRepository`
+  controla só o texto padrão (tipo de evento: aniversário, casamento, ...) —
+  dimensões independentes, cada evento escolhe as duas (`themeId` +
+  `occasionId`).
 - **DIP** — `application/use-cases/` e `app/actions/` dependem das
   interfaces em `domain/repositories/`, nunca de uma classe concreta do
   Postgres ou do Supabase diretamente.

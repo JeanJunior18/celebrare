@@ -11,7 +11,9 @@ import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gal
 import { updateEventFooter } from '@/application/use-cases/update-event-footer.use-case';
 import { updateEventHero } from '@/application/use-cases/update-event-hero.use-case';
 import { updateEventLocation } from '@/application/use-cases/update-event-location.use-case';
+import { updateEventOccasion } from '@/application/use-cases/update-event-occasion.use-case';
 import { updateEventSection } from '@/application/use-cases/update-event-section.use-case';
+import { updateEventTheme } from '@/application/use-cases/update-event-theme.use-case';
 import { updateRsvpCompanionCount } from '@/application/use-cases/update-rsvp-companion-count.use-case';
 import type { Event, SectionKey } from '@/domain/entities/event';
 import type { GiftCategory } from '@/domain/enums/gift-category';
@@ -21,6 +23,7 @@ import { PostgresAdminGalleryRepository } from '@/infrastructure/postgres/admin-
 import { PostgresAdminGiftRepository } from '@/infrastructure/postgres/admin-gift-repository.postgres';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresEventRepository } from '@/infrastructure/postgres/event-repository.postgres';
+import { PostgresOccasionRepository } from '@/infrastructure/postgres/occasion-repository.postgres';
 import { PostgresRsvpRepository } from '@/infrastructure/postgres/rsvp-repository.postgres';
 import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-repository.postgres';
 import { createMediaStorage } from '@/infrastructure/storage/s3-media-storage';
@@ -56,10 +59,12 @@ export async function createDashboardEventAction(
     const ownerUserId = await requireHostUserId();
     const eventRepository = new PostgresEventRepository(db);
     const themeRepository = new PostgresThemeRepository(db);
+    const occasionRepository = new PostgresOccasionRepository(db);
 
-    await createEvent(eventRepository, themeRepository, {
+    await createEvent(eventRepository, themeRepository, occasionRepository, {
       ownerUserId,
       themeId: String(formData.get('themeId') ?? ''),
+      occasionId: String(formData.get('occasionId') ?? ''),
       honoreeName: String(formData.get('honoreeName') ?? ''),
       subtitleLabel: formData.get('subtitleLabel')?.toString() || undefined,
       eventDate: String(formData.get('eventDate') ?? ''),
@@ -262,6 +267,62 @@ export async function updateDashboardEventHeroAction(
     revalidatePath('/dashboard/edit');
     return { success: true };
   } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface UpdateDashboardEventThemeResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function updateDashboardEventThemeAction(
+  _prevState: UpdateDashboardEventThemeResult | null,
+  formData: FormData,
+): Promise<UpdateDashboardEventThemeResult> {
+  try {
+    const event = await requireHostEvent();
+    const eventRepository = new PostgresEventRepository(db);
+    const themeRepository = new PostgresThemeRepository(db);
+
+    await updateEventTheme(eventRepository, themeRepository, event, {
+      themeId: String(formData.get('themeId') ?? ''),
+    });
+
+    revalidatePath('/dashboard/edit');
+    return { success: true };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface UpdateDashboardEventOccasionResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function updateDashboardEventOccasionAction(
+  _prevState: UpdateDashboardEventOccasionResult | null,
+  formData: FormData,
+): Promise<UpdateDashboardEventOccasionResult> {
+  try {
+    const event = await requireHostEvent();
+    const eventRepository = new PostgresEventRepository(db);
+    const occasionRepository = new PostgresOccasionRepository(db);
+
+    await updateEventOccasion(eventRepository, occasionRepository, event, {
+      occasionId: String(formData.get('occasionId') ?? ''),
+    });
+
+    revalidatePath('/dashboard/edit');
+    return { success: true };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
   }
 }

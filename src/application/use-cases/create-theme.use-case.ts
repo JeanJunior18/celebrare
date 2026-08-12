@@ -3,10 +3,10 @@ import { z } from 'zod';
 import type { Theme } from '@/domain/entities/theme';
 import type { ThemeRepository } from '@/domain/repositories/theme-repository';
 
-// `colorTokens`/`defaultCopy` chegam já parseados de JSON pela action
-// (`/internal/themes`) — a validação de formato (chaves esperadas) é
-// responsabilidade da UI/operador, não dessa camada; aqui só garantimos que
-// são objetos e que os campos simples têm o formato certo.
+// `colorTokens` chega já parseado de JSON pela action (`/internal/themes`)
+// — a validação de formato (chaves esperadas) é responsabilidade da
+// UI/operador, não dessa camada; aqui só garantimos que é um objeto e que
+// os campos simples têm o formato certo.
 const createThemeInputSchema = z.object({
   slug: z
     .string()
@@ -15,7 +15,6 @@ const createThemeInputSchema = z.object({
     .regex(/^[A-Z0-9_]+$/, 'Use letras maiúsculas, números e _ (ex: WEDDING).'),
   name: z.string().min(2),
   colorTokens: z.record(z.string(), z.unknown()),
-  defaultCopy: z.record(z.string(), z.unknown()),
   defaultIllustrationUrl: z.string().url().optional(),
 });
 
@@ -36,7 +35,6 @@ export async function createTheme(
     slug: parsed.slug,
     name: parsed.name,
     colorTokens: parsed.colorTokens as unknown as Theme['colorTokens'],
-    defaultCopy: parsed.defaultCopy as unknown as Theme['defaultCopy'],
     defaultIllustrationUrl: parsed.defaultIllustrationUrl,
   });
 

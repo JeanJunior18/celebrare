@@ -43,15 +43,6 @@ export function ThemeForm({ theme }: ThemeFormProps) {
           className="font-mono text-xs"
         />
 
-        <Textarea
-          label="Textos padrão (JSON — default_copy)"
-          name="defaultCopy"
-          defaultValue={theme ? JSON.stringify(theme.defaultCopy, null, 2) : ''}
-          required
-          rows={14}
-          className="font-mono text-xs"
-        />
-
         <Input
           label="Ilustração padrão (URL, opcional)"
           name="defaultIllustrationUrl"

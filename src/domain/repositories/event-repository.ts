@@ -3,6 +3,7 @@ import type { Event, EventCopyOverrides, SectionVisibility } from '@/domain/enti
 export interface CreateEventInput {
   ownerUserId: string;
   themeId: string;
+  occasionId: string;
   slug: string;
   honoreeName: string;
   subtitleLabel?: string;

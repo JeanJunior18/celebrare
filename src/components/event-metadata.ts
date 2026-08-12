@@ -8,7 +8,7 @@ import type { Event } from '@/domain/entities/event';
 // (docs/saas-platform-plan.md, fase 7). URLs relativas aqui são resolvidas
 // contra `metadataBase` (app/layout.tsx).
 export function buildEventMetadata(event: Event): Metadata {
-  const { titlePrefix } = event.theme.defaultCopy.hero;
+  const { titlePrefix } = event.occasion.defaultCopy.hero;
   const title = event.subtitleLabel
     ? `${titlePrefix} ${event.honoreeName} — ${event.subtitleLabel}`
     : `${titlePrefix} ${event.honoreeName}`;

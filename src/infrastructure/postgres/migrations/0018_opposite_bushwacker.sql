@@ -1,0 +1,1 @@
+ALTER TABLE "events" ALTER COLUMN "occasion_id" SET NOT NULL;

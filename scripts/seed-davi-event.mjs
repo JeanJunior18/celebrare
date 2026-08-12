@@ -4,7 +4,8 @@
 // docs/saas-platform-plan.md, fase 4.
 //
 // Idempotente: upsert por `slug`, seguro pra rodar de novo. Precisa rodar
-// depois de `npm run db:seed-themes` (o tema BIRTHDAY precisa existir).
+// depois de `npm run db:seed-themes` e `npm run db:seed-occasions` (o
+// tema e a ocasião BIRTHDAY precisam existir).
 //
 // Uso: npm run db:seed-davi-event
 
@@ -66,15 +67,22 @@ async function main() {
   }
   const themeId = themeRows[0].id;
 
+  const { rows: occasionRows } = await pool.query("select id from occasions where slug = 'BIRTHDAY'");
+  if (occasionRows.length === 0) {
+    throw new Error("Ocasião BIRTHDAY não encontrada — rode 'npm run db:seed-occasions' antes.");
+  }
+  const occasionId = occasionRows[0].id;
+
   const { rows: eventRows } = await pool.query(
     `insert into events (
-       theme_id, slug, honoree_name, subtitle_label, event_date, event_time,
+       theme_id, occasion_id, slug, honoree_name, subtitle_label, event_date, event_time,
        venue_name, venue_address, hero_image_url, google_maps_url, quote_text,
        quote_reference, pix_key, pix_qr_code_url, copy_overrides
      )
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
      on conflict (slug) do update set
        theme_id = excluded.theme_id,
+       occasion_id = excluded.occasion_id,
        honoree_name = excluded.honoree_name,
        subtitle_label = excluded.subtitle_label,
        event_date = excluded.event_date,
@@ -91,6 +99,7 @@ async function main() {
      returning id`,
     [
       themeId,
+      occasionId,
       daviEvent.slug,
       daviEvent.honoreeName,
       daviEvent.subtitleLabel,

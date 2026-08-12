@@ -3,12 +3,12 @@
 import { revalidatePath } from 'next/cache';
 import { ZodError } from 'zod';
 
-import { createTheme } from '@/application/use-cases/create-theme.use-case';
-import { updateTheme } from '@/application/use-cases/update-theme.use-case';
+import { createOccasion } from '@/application/use-cases/create-occasion.use-case';
+import { updateOccasion } from '@/application/use-cases/update-occasion.use-case';
 import { db } from '@/infrastructure/postgres/client';
-import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-repository.postgres';
+import { PostgresOccasionRepository } from '@/infrastructure/postgres/occasion-repository.postgres';
 
-export interface ThemeActionResult {
+export interface OccasionActionResult {
   success: boolean;
   message?: string;
 }
@@ -22,25 +22,24 @@ function parseJsonField(formData: FormData, field: string): unknown {
   }
 }
 
-export async function createThemeAction(
-  _prevState: ThemeActionResult | null,
+export async function createOccasionAction(
+  _prevState: OccasionActionResult | null,
   formData: FormData,
-): Promise<ThemeActionResult> {
+): Promise<OccasionActionResult> {
   try {
-    const repository = new PostgresThemeRepository(db);
+    const repository = new PostgresOccasionRepository(db);
 
-    const result = await createTheme(repository, {
+    const result = await createOccasion(repository, {
       slug: String(formData.get('slug') ?? ''),
       name: String(formData.get('name') ?? ''),
-      colorTokens: parseJsonField(formData, 'colorTokens') as never,
-      defaultIllustrationUrl: formData.get('defaultIllustrationUrl')?.toString() || undefined,
+      defaultCopy: parseJsonField(formData, 'defaultCopy') as never,
     });
 
     if (!result.success) {
-      return { success: false, message: 'Esse slug de tema já existe.' };
+      return { success: false, message: 'Esse slug de ocasião já existe.' };
     }
 
-    revalidatePath('/internal/themes');
+    revalidatePath('/internal/occasions');
     return { success: true };
   } catch (error) {
     if (error instanceof ZodError) {
@@ -50,21 +49,20 @@ export async function createThemeAction(
   }
 }
 
-export async function updateThemeAction(
-  _prevState: ThemeActionResult | null,
+export async function updateOccasionAction(
+  _prevState: OccasionActionResult | null,
   formData: FormData,
-): Promise<ThemeActionResult> {
+): Promise<OccasionActionResult> {
   try {
-    const repository = new PostgresThemeRepository(db);
-    const themeId = String(formData.get('themeId') ?? '');
+    const repository = new PostgresOccasionRepository(db);
+    const occasionId = String(formData.get('occasionId') ?? '');
 
-    await updateTheme(repository, themeId, {
+    await updateOccasion(repository, occasionId, {
       name: String(formData.get('name') ?? ''),
-      colorTokens: parseJsonField(formData, 'colorTokens') as never,
-      defaultIllustrationUrl: formData.get('defaultIllustrationUrl')?.toString() || undefined,
+      defaultCopy: parseJsonField(formData, 'defaultCopy') as never,
     });
 
-    revalidatePath('/internal/themes');
+    revalidatePath('/internal/occasions');
     return { success: true };
   } catch (error) {
     if (error instanceof ZodError) {

@@ -11,11 +11,16 @@ import type {
 import type { MediaStorage } from '@/infrastructure/storage/media-storage';
 import { imageExtension, uploadImageToMedia } from '@/infrastructure/storage/upload-image';
 
+import { toOccasion } from './occasion-repository.postgres';
 import { toTheme } from './theme-repository.postgres';
-import { events, themes } from './schema';
+import { events, occasions, themes } from './schema';
 import type * as schema from './schema';
 
-function toEvent(row: typeof events.$inferSelect, themeRow: typeof themes.$inferSelect): Event {
+function toEvent(
+  row: typeof events.$inferSelect,
+  themeRow: typeof themes.$inferSelect,
+  occasionRow: typeof occasions.$inferSelect,
+): Event {
   return {
     id: row.id,
     ownerUserId: row.ownerUserId,
@@ -35,6 +40,7 @@ function toEvent(row: typeof events.$inferSelect, themeRow: typeof themes.$infer
     sectionVisibility: row.sectionVisibility as Event['sectionVisibility'],
     copyOverrides: row.copyOverrides as Event['copyOverrides'],
     theme: toTheme(themeRow),
+    occasion: toOccasion(occasionRow),
   };
 }
 
@@ -48,12 +54,13 @@ export class PostgresEventRepository implements EventRepository {
 
   private async findOneWhere(condition: SQL): Promise<Event | null> {
     const [row] = await this.db
-      .select({ event: events, theme: themes })
+      .select({ event: events, theme: themes, occasion: occasions })
       .from(events)
       .innerJoin(themes, eq(events.themeId, themes.id))
+      .innerJoin(occasions, eq(events.occasionId, occasions.id))
       .where(condition);
 
-    return row ? toEvent(row.event, row.theme) : null;
+    return row ? toEvent(row.event, row.theme, row.occasion) : null;
   }
 
   async findBySlug(slug: string): Promise<Event | null> {
@@ -65,12 +72,13 @@ export class PostgresEventRepository implements EventRepository {
   }
 
   async listAll(): Promise<Event[]> {
-    const rows = await this.db.select({ event: events, theme: themes }).from(events).innerJoin(
-      themes,
-      eq(events.themeId, themes.id),
-    );
+    const rows = await this.db
+      .select({ event: events, theme: themes, occasion: occasions })
+      .from(events)
+      .innerJoin(themes, eq(events.themeId, themes.id))
+      .innerJoin(occasions, eq(events.occasionId, occasions.id));
 
-    return rows.map((row) => toEvent(row.event, row.theme));
+    return rows.map((row) => toEvent(row.event, row.theme, row.occasion));
   }
 
   async create(input: CreateEventInput): Promise<Event> {
@@ -79,6 +87,7 @@ export class PostgresEventRepository implements EventRepository {
       .values({
         ownerUserId: input.ownerUserId,
         themeId: input.themeId,
+        occasionId: input.occasionId,
         slug: input.slug,
         honoreeName: input.honoreeName,
         subtitleLabel: input.subtitleLabel ?? null,

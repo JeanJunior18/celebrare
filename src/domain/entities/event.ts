@@ -1,4 +1,5 @@
-import type { Theme, ThemeDefaultCopy } from '@/domain/entities/theme';
+import type { Occasion, OccasionDefaultCopy } from '@/domain/entities/occasion';
+import type { Theme } from '@/domain/entities/theme';
 
 // Hero nunca entra aqui — não pode ser omitido da página pública.
 export type SectionKey = 'rsvp' | 'giftRegistry' | 'location' | 'gallery' | 'guestbook';
@@ -36,24 +37,25 @@ export interface Event {
   sectionVisibility: SectionVisibility;
   copyOverrides: EventCopyOverrides;
   theme: Theme;
+  occasion: Occasion;
 }
 
-// O copy padrão de um tema é compartilhado por todos os eventos daquele
-// tema (ex: todo evento BIRTHDAY parte do mesmo texto genérico) e pode
-// referenciar o homenageado via placeholder literal `{name}`, substituído
-// aqui pelo `honoreeName` do evento — mesma ideia de hero.titlePrefix +
-// event.honoreeName, só que embutida no texto em vez de renderizada em
-// dois nós separados.
-function interpolateCopy(defaultCopy: ThemeDefaultCopy, honoreeName: string): ThemeDefaultCopy {
+// O copy padrão de uma ocasião é compartilhado por todos os eventos
+// daquela ocasião (ex: todo evento BIRTHDAY parte do mesmo texto
+// genérico) e pode referenciar o homenageado via placeholder literal
+// `{name}`, substituído aqui pelo `honoreeName` do evento — mesma ideia
+// de hero.titlePrefix + event.honoreeName, só que embutida no texto em
+// vez de renderizada em dois nós separados.
+function interpolateCopy(defaultCopy: OccasionDefaultCopy, honoreeName: string): OccasionDefaultCopy {
   const escapedName = JSON.stringify(honoreeName).slice(1, -1);
   return JSON.parse(JSON.stringify(defaultCopy).replaceAll('{name}', escapedName));
 }
 
-// Cada seção lê o copy resolvido daqui em vez de event.theme.defaultCopy
+// Cada seção lê o copy resolvido daqui em vez de event.occasion.defaultCopy
 // direto, pra respeitar o override por evento e a interpolação de
-// `{name}` sem perder o resto do copy do tema.
-export function resolveEventCopy(event: Event): ThemeDefaultCopy {
-  const defaultCopy = interpolateCopy(event.theme.defaultCopy, event.honoreeName);
+// `{name}` sem perder o resto do copy da ocasião.
+export function resolveEventCopy(event: Event): OccasionDefaultCopy {
+  const defaultCopy = interpolateCopy(event.occasion.defaultCopy, event.honoreeName);
   const overrides = event.copyOverrides;
 
   return {

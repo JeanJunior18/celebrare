@@ -11,6 +11,7 @@ import { SectionContainer } from '@/components/ui/SectionContainer';
 import { auth } from '@/infrastructure/auth/auth';
 import { db } from '@/infrastructure/postgres/client';
 import { PostgresEventRepository } from '@/infrastructure/postgres/event-repository.postgres';
+import { PostgresOccasionRepository } from '@/infrastructure/postgres/occasion-repository.postgres';
 import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-repository.postgres';
 import { getSiteUrl } from '@/infrastructure/site-url';
 
@@ -32,14 +33,15 @@ export default async function DashboardPage() {
 
   if (!event) {
     const themeRepository = new PostgresThemeRepository(db);
-    const themes = await themeRepository.listAll();
+    const occasionRepository = new PostgresOccasionRepository(db);
+    const [themes, occasions] = await Promise.all([themeRepository.listAll(), occasionRepository.listAll()]);
 
     return (
       <PlatformShell>
         <main className="flex flex-1 flex-col">
           <BrandMark />
-          <SectionContainer title="Criar evento" subtitle="Escolha um tema e preencha os dados do seu evento.">
-            <CreateEventForm themes={themes} />
+          <SectionContainer title="Criar evento" subtitle="Escolha uma ocasião, um tema e preencha os dados do seu evento.">
+            <CreateEventForm themes={themes} occasions={occasions} />
           </SectionContainer>
         </main>
       </PlatformShell>
