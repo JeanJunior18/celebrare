@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 
 import { createDashboardEventAction } from '@/app/actions/dashboard.actions';
 import { Button } from '@/components/ui/Button';
@@ -18,6 +18,8 @@ export interface CreateEventFormProps {
 
 export function CreateEventForm({ themes, occasions }: CreateEventFormProps) {
   const [state, formAction, isPending] = useActionState(createDashboardEventAction, null);
+  const [themeId, setThemeId] = useState(themes[0]?.id ?? '');
+  const selectedTheme = themes.find((theme) => theme.id === themeId);
 
   if (state?.success) {
     return <p className="font-body text-primary-700">Evento criado! Atualize a página pra ver seu dashboard. 💚</p>;
@@ -34,13 +36,22 @@ export function CreateEventForm({ themes, occasions }: CreateEventFormProps) {
             className="flex-1"
             options={occasions.map((occasion) => ({ value: occasion.id, label: occasion.name }))}
           />
-          <Select
-            label="Tema"
-            name="themeId"
-            required
-            className="flex-1"
-            options={themes.map((theme) => ({ value: theme.id, label: theme.name }))}
-          />
+          <div className="flex flex-1 items-end gap-3">
+            <Select
+              label="Tema"
+              name="themeId"
+              required
+              value={themeId}
+              onChange={(event) => setThemeId(event.target.value)}
+              options={themes.map((theme) => ({ value: theme.id, label: theme.name }))}
+              className="flex-1"
+            />
+            <span
+              aria-hidden
+              className="mb-[3px] h-12 w-12 shrink-0 rounded-lg border border-primary-200"
+              style={{ backgroundColor: selectedTheme?.colorTokens.primary['500'] }}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-5 md:flex-row">
