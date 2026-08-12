@@ -128,9 +128,13 @@ export class PostgresEventRepository implements EventRepository {
     let heroImageUrl = existing.heroImageUrl;
     if (input.image) {
       if (!this.storage) throw new Error('Storage de mídia não configurado.');
+      // Timestamp no path (não só `hero.${ext}`) pra cada upload virar um
+      // objeto S3 novo — senão a URL nunca muda e o Next Image Optimizer +
+      // browser continuam servindo a versão antiga em cache depois de trocar
+      // a foto.
       heroImageUrl = await uploadImageToMedia(
         this.storage,
-        `events/${eventId}/hero.${imageExtension(input.image)}`,
+        `events/${eventId}/hero-${Date.now()}.${imageExtension(input.image)}`,
         input.image,
       );
     } else if (input.imageUrl) {

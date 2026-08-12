@@ -50,14 +50,22 @@ export function HeroSection({ event }: HeroSectionProps) {
           <p className="mt-4 max-w-xs font-script text-2xl text-primary-600 lg:order-3 lg:mt-6">{tagline}</p>
         </div>
 
-        <div className="relative mt-10 h-48 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary-200/60 shadow-card lg:mt-0 lg:h-80 lg:flex-1">
+        <div
+          className={`relative mt-10 w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary-200/60 shadow-card lg:mt-0 lg:h-80 lg:flex-1 ${
+            imageUrl ? '' : 'h-48'
+          }`}
+        >
           {imageUrl ? (
+            // Sem `fill` de propósito: no mobile a foto mostra a altura
+            // natural (sem cortar), só no desktop (`lg:h-full` + coluna
+            // `lg:h-80` do pai) ela preenche a altura fixa com crop.
             <Image
               src={imageUrl}
               alt={`Foto de ${event.honoreeName}`}
-              fill
+              width={800}
+              height={600}
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover object-top"
+              className="h-auto w-full object-cover object-top lg:h-full"
               priority
             />
           ) : (
