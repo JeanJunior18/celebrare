@@ -13,4 +13,17 @@ export interface AdminGiftRepository {
     image?: File;
     imageUrl?: string;
   }): Promise<GiftItem>;
+  updateItem(input: {
+    id: string;
+    eventId: string;
+    name: string;
+    description?: string;
+    category: GiftCategory;
+    sizeLabel?: string;
+    quantityNeeded: number;
+    purchaseUrl?: string;
+    image?: File;
+    imageUrl?: string;
+  }): Promise<GiftItem>;
+  deleteItem(id: string, eventId: string): Promise<void>;
 }

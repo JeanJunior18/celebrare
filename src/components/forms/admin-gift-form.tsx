@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useState, useTransition } from 'react';
+import { useActionState, useEffect, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { fetchGiftLinkMetadataAction, type AdminGiftActionResult } from '@/app/actions/admin-gift.actions';
 import { Button } from '@/components/ui/Button';
@@ -25,6 +26,7 @@ export interface AdminGiftFormProps {
 }
 
 export function AdminGiftForm({ action }: AdminGiftFormProps) {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(action, null);
   const [formKey, setFormKey] = useState(0);
   const [prevState, setPrevState] = useState(state);
@@ -40,6 +42,10 @@ export function AdminGiftForm({ action }: AdminGiftFormProps) {
       setFetchError(undefined);
     }
   }
+
+  useEffect(() => {
+    if (state?.success) router.refresh();
+  }, [state, router]);
 
   function handleFetchMetadata() {
     if (!values.purchaseUrl) return;

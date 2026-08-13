@@ -1,3 +1,4 @@
+import { and, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 
 import type { GiftItem } from '@/domain/entities/gift-item';
@@ -53,5 +54,43 @@ export class PostgresAdminGiftRepository implements AdminGiftRepository {
       .returning();
 
     return toGiftItem(item);
+  }
+
+  async updateItem(input: {
+    id: string;
+    eventId: string;
+    name: string;
+    description?: string;
+    category: GiftCategory;
+    sizeLabel?: string;
+    quantityNeeded: number;
+    purchaseUrl?: string;
+    image?: File;
+    imageUrl?: string;
+  }): Promise<GiftItem> {
+    const imageUrl = input.image
+      ? await uploadImageToMedia(this.storage, `gifts/${input.id}.${imageExtension(input.image)}`, input.image)
+      : input.imageUrl;
+
+    const [item] = await this.db
+      .update(giftItems)
+      .set({
+        name: input.name,
+        description: input.description ?? null,
+        category: input.category,
+        sizeLabel: input.sizeLabel ?? null,
+        quantityNeeded: input.quantityNeeded,
+        purchaseUrl: input.purchaseUrl ?? null,
+        ...(imageUrl ? { imageUrl } : {}),
+      })
+      .where(and(eq(giftItems.id, input.id), eq(giftItems.eventId, input.eventId)))
+      .returning();
+
+    if (!item) throw new Error('Presente não encontrado.');
+    return toGiftItem(item);
+  }
+
+  async deleteItem(id: string, eventId: string): Promise<void> {
+    await this.db.delete(giftItems).where(and(eq(giftItems.id, id), eq(giftItems.eventId, eventId)));
   }
 }

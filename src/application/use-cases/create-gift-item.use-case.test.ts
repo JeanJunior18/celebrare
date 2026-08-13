@@ -27,6 +27,23 @@ class FakeAdminGiftRepository implements AdminGiftRepository {
       purchaseUrl: input.purchaseUrl ?? null,
     };
   }
+
+  async updateItem(input: Parameters<AdminGiftRepository['updateItem']>[0]): Promise<GiftItem> {
+    return {
+      id: input.id,
+      name: input.name,
+      description: input.description ?? null,
+      imageUrl: input.imageUrl ?? 'https://example.com/image.jpg',
+      category: input.category,
+      sizeLabel: input.sizeLabel ?? null,
+      quantityNeeded: input.quantityNeeded,
+      status: GiftStatus.AVAILABLE,
+      createdAt: new Date().toISOString(),
+      purchaseUrl: input.purchaseUrl ?? null,
+    };
+  }
+
+  async deleteItem(): Promise<void> {}
 }
 
 function fakeImage(): File {

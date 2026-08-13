@@ -6,6 +6,7 @@ import { ZodError } from 'zod';
 import { createEvent } from '@/application/use-cases/create-event.use-case';
 import { createGalleryPhoto } from '@/application/use-cases/create-gallery-photo.use-case';
 import { createGiftItem } from '@/application/use-cases/create-gift-item.use-case';
+import { deleteGiftItem } from '@/application/use-cases/delete-gift-item.use-case';
 import { deleteRsvp } from '@/application/use-cases/delete-rsvp.use-case';
 import { getNextGalleryDisplayOrder } from '@/application/use-cases/get-next-gallery-display-order.use-case';
 import { updateEventFooter } from '@/application/use-cases/update-event-footer.use-case';
@@ -14,8 +15,10 @@ import { updateEventLocation } from '@/application/use-cases/update-event-locati
 import { updateEventOccasion } from '@/application/use-cases/update-event-occasion.use-case';
 import { updateEventSection } from '@/application/use-cases/update-event-section.use-case';
 import { updateEventTheme } from '@/application/use-cases/update-event-theme.use-case';
+import { updateGiftItem } from '@/application/use-cases/update-gift-item.use-case';
 import { updateRsvpCompanionCount } from '@/application/use-cases/update-rsvp-companion-count.use-case';
 import type { Event, SectionKey } from '@/domain/entities/event';
+import type { GiftItem } from '@/domain/entities/gift-item';
 import type { GiftCategory } from '@/domain/enums/gift-category';
 import { auth } from '@/infrastructure/auth/auth';
 import type { AdminGiftActionResult } from '@/app/actions/admin-gift.actions';
@@ -114,6 +117,60 @@ export async function createDashboardGiftItemAction(
     revalidatePath('/dashboard/gifts');
     return { success: true };
   } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export interface AdminGiftMutationResult {
+  success: boolean;
+  message?: string;
+  item?: GiftItem;
+}
+
+export async function updateDashboardGiftItemAction(formData: FormData): Promise<AdminGiftMutationResult> {
+  try {
+    const eventId = await requireHostEventId();
+    const repository = new PostgresAdminGiftRepository(db, createMediaStorage());
+
+    const imageField = formData.get('image');
+    const image = imageField instanceof File && imageField.size > 0 ? imageField : undefined;
+
+    const item = await updateGiftItem(repository, {
+      id: String(formData.get('id') ?? ''),
+      eventId,
+      name: String(formData.get('name') ?? ''),
+      description: formData.get('description')?.toString() || undefined,
+      category: formData.get('category') as GiftCategory,
+      sizeLabel: formData.get('sizeLabel')?.toString() || undefined,
+      quantityNeeded: Number(formData.get('quantityNeeded') ?? 1),
+      purchaseUrl: formData.get('purchaseUrl')?.toString() || undefined,
+      image,
+      imageUrl: formData.get('imageUrl')?.toString() || undefined,
+    });
+
+    revalidatePath('/dashboard/gifts');
+    return { success: true, item };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
+    return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
+  }
+}
+
+export async function deleteDashboardGiftItemAction(giftItemId: string): Promise<AdminGiftMutationResult> {
+  try {
+    const eventId = await requireHostEventId();
+    const repository = new PostgresAdminGiftRepository(db, createMediaStorage());
+
+    await deleteGiftItem(repository, { id: giftItemId, eventId });
+
+    revalidatePath('/dashboard/gifts');
+    return { success: true };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return { success: false, message: error.issues[0]?.message ?? 'Dados inválidos.' };
+    }
     return { success: false, message: error instanceof Error ? error.message : 'Erro inesperado.' };
   }
 }
