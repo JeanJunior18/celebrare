@@ -1,8 +1,8 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export interface SectionContainerProps extends HTMLAttributes<HTMLElement> {
   title?: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
 }
 
 export function HeartDivider() {

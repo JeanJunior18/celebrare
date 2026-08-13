@@ -12,7 +12,7 @@ import { db } from '@/infrastructure/postgres/client';
 import { PostgresEventRepository } from '@/infrastructure/postgres/event-repository.postgres';
 import { PostgresOccasionRepository } from '@/infrastructure/postgres/occasion-repository.postgres';
 import { PostgresThemeRepository } from '@/infrastructure/postgres/theme-repository.postgres';
-import { getSiteUrl } from '@/infrastructure/site-url';
+import { getRequestSiteUrl } from '@/infrastructure/site-url';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,10 +45,27 @@ export default async function DashboardPage() {
     );
   }
 
+  const siteUrl = await getRequestSiteUrl();
+
   return (
     <main className="flex flex-1 flex-col">
       <BrandMark />
-      <SectionContainer title={event.honoreeName} subtitle={`Página pública: ${getSiteUrl()}/e/${event.slug}`}>
+      <SectionContainer
+        title={event.honoreeName}
+        subtitle={
+          <>
+            Página pública:{' '}
+            <a
+              href={`/e/${event.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-primary-700 underline"
+            >
+              {siteUrl}/e/{event.slug}
+            </a>
+          </>
+        }
+      >
         <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {managementLinks.map((link) => (
             <Link key={link.href} href={link.href}>
